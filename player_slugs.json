@@ -1,0 +1,2542 @@
+{
+  "carlos alcaraz": {
+    "slug": "alcaraz-5ab70",
+    "tour": "ATP",
+    "original_name": "Alcaraz Carlos"
+  },
+  "jannik sinner": {
+    "slug": "sinner-8b8e8",
+    "tour": "ATP",
+    "original_name": "Sinner Jannik"
+  },
+  "alexander zverev": {
+    "slug": "zverev-6f768",
+    "tour": "ATP",
+    "original_name": "Zverev Alexander"
+  },
+  "novak djokovic": {
+    "slug": "djokovic",
+    "tour": "ATP",
+    "original_name": "Djokovic Novak"
+  },
+  "lorenzo musetti": {
+    "slug": "musetti",
+    "tour": "ATP",
+    "original_name": "Musetti Lorenzo"
+  },
+  "alex de minaur": {
+    "slug": "de-minaur",
+    "tour": "ATP",
+    "original_name": "De Minaur Alex"
+  },
+  "ben shelton": {
+    "slug": "shelton-38989",
+    "tour": "ATP",
+    "original_name": "Shelton Ben"
+  },
+  "felix auger aliassime": {
+    "slug": "auger-aliassime",
+    "tour": "ATP",
+    "original_name": "Auger Aliassime Felix"
+  },
+  "taylor fritz": {
+    "slug": "fritz-f1aa7",
+    "tour": "ATP",
+    "original_name": "Fritz Taylor"
+  },
+  "alexander bublik": {
+    "slug": "bublik-43f80",
+    "tour": "ATP",
+    "original_name": "Bublik Alexander"
+  },
+  "jack draper": {
+    "slug": "draper-e73d3",
+    "tour": "ATP",
+    "original_name": "Draper Jack"
+  },
+  "daniil medvedev": {
+    "slug": "medvedev-e0d2d",
+    "tour": "ATP",
+    "original_name": "Medvedev Daniil"
+  },
+  "casper ruud": {
+    "slug": "ruud-dfb38",
+    "tour": "ATP",
+    "original_name": "Ruud Casper"
+  },
+  "alejandro davidovich fokina": {
+    "slug": "davidovich-fokina",
+    "tour": "ATP",
+    "original_name": "Davidovich Fokina Alejandro"
+  },
+  "andrey rublev": {
+    "slug": "rublev",
+    "tour": "ATP",
+    "original_name": "Rublev Andrey"
+  },
+  "holger rune": {
+    "slug": "rune",
+    "tour": "ATP",
+    "original_name": "Rune Holger"
+  },
+  "jakub mensik": {
+    "slug": "mensik",
+    "tour": "ATP",
+    "original_name": "Mensik Jakub"
+  },
+  "karen khachanov": {
+    "slug": "khachanov",
+    "tour": "ATP",
+    "original_name": "Khachanov Karen"
+  },
+  "jiri lehecka": {
+    "slug": "lehecka",
+    "tour": "ATP",
+    "original_name": "Lehecka Jiri"
+  },
+  "tommy paul": {
+    "slug": "paul-324c3",
+    "tour": "ATP",
+    "original_name": "Paul Tommy"
+  },
+  "francisco cerundolo": {
+    "slug": "cerundolo",
+    "tour": "ATP",
+    "original_name": "Cerundolo Francisco"
+  },
+  "flavio cobolli": {
+    "slug": "cobolli-d6311",
+    "tour": "ATP",
+    "original_name": "Cobolli Flavio"
+  },
+  "denis shapovalov": {
+    "slug": "shapovalov",
+    "tour": "ATP",
+    "original_name": "Shapovalov Denis"
+  },
+  "tomas machac": {
+    "slug": "machac",
+    "tour": "ATP",
+    "original_name": "Machac Tomas"
+  },
+  "luciano darderi": {
+    "slug": "darderi",
+    "tour": "ATP",
+    "original_name": "Darderi Luciano"
+  },
+  "tallon griekspoor": {
+    "slug": "griekspoor-d58ed",
+    "tour": "ATP",
+    "original_name": "Griekspoor Tallon"
+  },
+  "cameron norrie": {
+    "slug": "norrie",
+    "tour": "ATP",
+    "original_name": "Norrie Cameron"
+  },
+  "arthur rinderknech": {
+    "slug": "rinderknech",
+    "tour": "ATP",
+    "original_name": "Rinderknech Arthur"
+  },
+  "learner tien": {
+    "slug": "tien",
+    "tour": "ATP",
+    "original_name": "Tien Learner"
+  },
+  "brandon nakashima": {
+    "slug": "nakashima-68876",
+    "tour": "ATP",
+    "original_name": "Nakashima Brandon"
+  },
+  "valentin vacherot": {
+    "slug": "vacherot",
+    "tour": "ATP",
+    "original_name": "Vacherot Valentin"
+  },
+  "joao fonseca": {
+    "slug": "fonseca-57dc1",
+    "tour": "ATP",
+    "original_name": "Fonseca Joao"
+  },
+  "ugo humbert": {
+    "slug": "humbert-e2553",
+    "tour": "ATP",
+    "original_name": "Humbert Ugo"
+  },
+  "frances tiafoe": {
+    "slug": "tiafoe",
+    "tour": "ATP",
+    "original_name": "Tiafoe Frances"
+  },
+  "stefanos tsitsipas": {
+    "slug": "tsitsipas-b526f",
+    "tour": "ATP",
+    "original_name": "Tsitsipas Stefanos"
+  },
+  "sebastian baez": {
+    "slug": "baez-a8fb1",
+    "tour": "WTA",
+    "original_name": "Baez Sebastian"
+  },
+  "corentin moutet": {
+    "slug": "moutet",
+    "tour": "ATP",
+    "original_name": "Moutet Corentin"
+  },
+  "alex michelsen": {
+    "slug": "michelsen-a98bb",
+    "tour": "ATP",
+    "original_name": "Michelsen Alex"
+  },
+  "jaume munar": {
+    "slug": "munar-d1298",
+    "tour": "ATP",
+    "original_name": "Munar Jaume"
+  },
+  "lorenzo sonego": {
+    "slug": "sonego",
+    "tour": "ATP",
+    "original_name": "Sonego Lorenzo"
+  },
+  "gabriel diallo": {
+    "slug": "diallo-dd116",
+    "tour": "ATP",
+    "original_name": "Diallo Gabriel"
+  },
+  "arthur fils": {
+    "slug": "fils",
+    "tour": "ATP",
+    "original_name": "Fils Arthur"
+  },
+  "zizou bergs": {
+    "slug": "bergs",
+    "tour": "ATP",
+    "original_name": "Bergs Zizou"
+  },
+  "daniel altmaier": {
+    "slug": "altmaier",
+    "tour": "ATP",
+    "original_name": "Altmaier Daniel"
+  },
+  "grigor dimitrov": {
+    "slug": "dimitrov-779bc",
+    "tour": "ATP",
+    "original_name": "Dimitrov Grigor"
+  },
+  "nuno borges": {
+    "slug": "borges-8d823",
+    "tour": "ATP",
+    "original_name": "Borges Nuno"
+  },
+  "fabian marozsan": {
+    "slug": "marozsan",
+    "tour": "ATP",
+    "original_name": "Marozsan Fabian"
+  },
+  "jenson brooksby": {
+    "slug": "brooksby",
+    "tour": "ATP",
+    "original_name": "Brooksby Jenson"
+  },
+  "camilo ugo carabelli": {
+    "slug": "ugo-carabelli",
+    "tour": "ATP",
+    "original_name": "Ugo Carabelli Camilo"
+  },
+  "alexei popyrin": {
+    "slug": "popyrin",
+    "tour": "ATP",
+    "original_name": "Popyrin Alexei"
+  },
+  "rita colyer": {
+    "slug": "colyer",
+    "tour": "WTA",
+    "original_name": "Colyer Rita"
+  },
+  "clement chidekh": {
+    "slug": "chidekh",
+    "tour": "WTA",
+    "original_name": "Chidekh Clement"
+  },
+  "yelyzaveta kotliar": {
+    "slug": "kotliar",
+    "tour": "WTA",
+    "original_name": "Kotliar Yelyzaveta"
+  },
+  "jasmijn gimbrere": {
+    "slug": "gimbrere",
+    "tour": "WTA",
+    "original_name": "Gimbrere Jasmijn"
+  },
+  "justas trainauskas": {
+    "slug": "trainauskas",
+    "tour": "WTA",
+    "original_name": "Trainauskas Justas"
+  },
+  "ema harajda": {
+    "slug": "harajda",
+    "tour": "WTA",
+    "original_name": "Harajda Ema"
+  },
+  "maria penalver aguilo": {
+    "slug": "penalver-aguilo",
+    "tour": "WTA",
+    "original_name": "Penalver Aguilo Maria"
+  },
+  "nidhi chilumula": {
+    "slug": "chilumula",
+    "tour": "WTA",
+    "original_name": "Chilumula Nidhi"
+  },
+  "sam bakker": {
+    "slug": "bakker-19724",
+    "tour": "WTA",
+    "original_name": "Bakker Sam"
+  },
+  "carson branstine": {
+    "slug": "branstine-1974d",
+    "tour": "WTA",
+    "original_name": "Branstine Carson"
+  },
+  "marketa vondrousova": {
+    "slug": "vondrousova",
+    "tour": "WTA",
+    "original_name": "Vondrousova Marketa"
+  },
+  "yoshihito nishioka": {
+    "slug": "nishioka",
+    "tour": "WTA",
+    "original_name": "Nishioka Yoshihito"
+  },
+  "elahi galan daniel": {
+    "slug": "galan-e4b30",
+    "tour": "WTA",
+    "original_name": "Galan Daniel Elahi"
+  },
+  "marcos giron": {
+    "slug": "giron-49e97",
+    "tour": "ATP",
+    "original_name": "Giron Marcos"
+  },
+  "alexandre muller": {
+    "slug": "muller-c81bc",
+    "tour": "ATP",
+    "original_name": "Muller Alexandre"
+  },
+  "sebastian korda": {
+    "slug": "korda-2529f",
+    "tour": "ATP",
+    "original_name": "Korda Sebastian"
+  },
+  "marton fucsovics": {
+    "slug": "fucsovics",
+    "tour": "ATP",
+    "original_name": "Fucsovics Marton"
+  },
+  "hubert hurkacz": {
+    "slug": "hurkacz",
+    "tour": "ATP",
+    "original_name": "Hurkacz Hubert"
+  },
+  "aleksandar kovacevic": {
+    "slug": "kovacevic-a2706",
+    "tour": "ATP",
+    "original_name": "Kovacevic Aleksandar"
+  },
+  "matteo berrettini": {
+    "slug": "berrettini-707ad",
+    "tour": "ATP",
+    "original_name": "Berrettini Matteo"
+  },
+  "valentin royer": {
+    "slug": "royer",
+    "tour": "ATP",
+    "original_name": "Royer Valentin"
+  },
+  "kamil majchrzak": {
+    "slug": "majchrzak-905d8",
+    "tour": "ATP",
+    "original_name": "Majchrzak Kamil"
+  },
+  "miomir kecmanovic": {
+    "slug": "kecmanovic",
+    "tour": "ATP",
+    "original_name": "Kecmanovic Miomir"
+  },
+  "giovanni mpetshi perricard": {
+    "slug": "mpetshi-perricard",
+    "tour": "ATP",
+    "original_name": "Mpetshi Perricard Giovanni"
+  },
+  "martin etcheverry tomas": {
+    "slug": "etcheverry-7101a",
+    "tour": "ATP",
+    "original_name": "Etcheverry Tomas Martin"
+  },
+  "reilly opelka": {
+    "slug": "opelka",
+    "tour": "ATP",
+    "original_name": "Opelka Reilly"
+  },
+  "terence atmane": {
+    "slug": "atmane",
+    "tour": "ATP",
+    "original_name": "Atmane Terence"
+  },
+  "matteo arnaldi": {
+    "slug": "arnaldi",
+    "tour": "ATP",
+    "original_name": "Arnaldi Matteo"
+  },
+  "damir dzumhur": {
+    "slug": "dzumhur",
+    "tour": "ATP",
+    "original_name": "Dzumhur Damir"
+  },
+  "arthur cazaux": {
+    "slug": "cazaux",
+    "tour": "ATP",
+    "original_name": "Cazaux Arthur"
+  },
+  "francisco comesana": {
+    "slug": "comesana-c17e0",
+    "tour": "ATP",
+    "original_name": "Comesana Francisco"
+  },
+  "adrian mannarino": {
+    "slug": "mannarino-a7108",
+    "tour": "ATP",
+    "original_name": "Mannarino Adrian"
+  },
+  "marin cilic": {
+    "slug": "cilic",
+    "tour": "ATP",
+    "original_name": "Cilic Marin"
+  },
+  "pedro martinez": {
+    "slug": "martinez-c0caf",
+    "tour": "ATP",
+    "original_name": "Martinez Pedro"
+  },
+  "raphael collignon": {
+    "slug": "collignon",
+    "tour": "ATP",
+    "original_name": "Collignon Raphael"
+  },
+  "jesper de jong": {
+    "slug": "de-jong-57322",
+    "tour": "ATP",
+    "original_name": "De Jong Jesper"
+  },
+  "mariano navone": {
+    "slug": "navone",
+    "tour": "ATP",
+    "original_name": "Navone Mariano"
+  },
+  "botic van de zandschulp": {
+    "slug": "van-de-zandschulp",
+    "tour": "ATP",
+    "original_name": "Van De Zandschulp Botic"
+  },
+  "mattia bellucci": {
+    "slug": "bellucci-47e7e",
+    "tour": "ATP",
+    "original_name": "Bellucci Mattia"
+  },
+  "jacob fearnley": {
+    "slug": "fearnley",
+    "tour": "ATP",
+    "original_name": "Fearnley Jacob"
+  },
+  "aleksandar vukic": {
+    "slug": "vukic",
+    "tour": "ATP",
+    "original_name": "Vukic Aleksandar"
+  },
+  "alejandro tabilo": {
+    "slug": "tabilo",
+    "tour": "ATP",
+    "original_name": "Tabilo Alejandro"
+  },
+  "ethan quinn": {
+    "slug": "quinn-d0193",
+    "tour": "ATP",
+    "original_name": "Quinn Ethan"
+  },
+  "adam walton": {
+    "slug": "walton",
+    "tour": "ATP",
+    "original_name": "Walton Adam"
+  },
+  "cristian garin": {
+    "slug": "garin",
+    "tour": "ATP",
+    "original_name": "Garin Cristian"
+  },
+  "quentin halys": {
+    "slug": "halys",
+    "tour": "ATP",
+    "original_name": "Halys Quentin"
+  },
+  "filip misolic": {
+    "slug": "misolic",
+    "tour": "ATP",
+    "original_name": "Misolic Filip"
+  },
+  "eliot spizzirri": {
+    "slug": "spizzirri",
+    "tour": "ATP",
+    "original_name": "Spizzirri Eliot"
+  },
+  "jan-lennard struff": {
+    "slug": "struff",
+    "tour": "ATP",
+    "original_name": "Struff Jan-Lennard"
+  },
+  "manuel cerundolo juan": {
+    "slug": "cerundolo-08df6",
+    "tour": "ATP",
+    "original_name": "Cerundolo Juan Manuel"
+  },
+  "james duckworth": {
+    "slug": "duckworth",
+    "tour": "ATP",
+    "original_name": "Duckworth James"
+  },
+  "emilio nava": {
+    "slug": "nava-337db",
+    "tour": "ATP",
+    "original_name": "Nava Emilio"
+  },
+  "hamad medjedovic": {
+    "slug": "medjedovic",
+    "tour": "ATP",
+    "original_name": "Medjedovic Hamad"
+  },
+  "roberto bautista-agut": {
+    "slug": "bautista-agut",
+    "tour": "ATP",
+    "original_name": "Bautista-Agut Roberto"
+  },
+  "laslo djere": {
+    "slug": "djere",
+    "tour": "ATP",
+    "original_name": "Djere Laslo"
+  },
+  "hugo gaston": {
+    "slug": "gaston-e1fa4",
+    "tour": "ATP",
+    "original_name": "Gaston Hugo"
+  },
+  "pablo carreno-busta": {
+    "slug": "carreno-busta",
+    "tour": "ATP",
+    "original_name": "Carreno-Busta Pablo"
+  },
+  "dalibor svrcina": {
+    "slug": "svrcina",
+    "tour": "ATP",
+    "original_name": "Svrcina Dalibor"
+  },
+  "alexander blockx": {
+    "slug": "blockx",
+    "tour": "ATP",
+    "original_name": "Blockx Alexander"
+  },
+  "alexander shevchenko": {
+    "slug": "shevchenko-3bd40",
+    "tour": "ATP",
+    "original_name": "Shevchenko Alexander"
+  },
+  "tristan schoolkate": {
+    "slug": "schoolkate",
+    "tour": "ATP",
+    "original_name": "Schoolkate Tristan"
+  },
+  "carlos taberner": {
+    "slug": "taberner",
+    "tour": "ATP",
+    "original_name": "Taberner Carlos"
+  },
+  "ignacio buse": {
+    "slug": "buse",
+    "tour": "ATP",
+    "original_name": "Buse Ignacio"
+  },
+  "vit kopriva": {
+    "slug": "kopriva",
+    "tour": "ATP",
+    "original_name": "Kopriva Vit"
+  },
+  "yannick hanfmann": {
+    "slug": "hanfmann",
+    "tour": "ATP",
+    "original_name": "Hanfmann Yannick"
+  },
+  "agustin tirante thiago": {
+    "slug": "tirante",
+    "tour": "ATP",
+    "original_name": "Tirante Thiago Agustin"
+  },
+  "andres burruchaga roman": {
+    "slug": "burruchaga",
+    "tour": "ATP",
+    "original_name": "Burruchaga Roman Andres"
+  },
+  "nikoloz basilashvili": {
+    "slug": "basilashvili",
+    "tour": "ATP",
+    "original_name": "Basilashvili Nikoloz"
+  },
+  "benjamin bonzi": {
+    "slug": "bonzi-a38fa",
+    "tour": "ATP",
+    "original_name": "Bonzi Benjamin"
+  },
+  "tomas barrios vera marcelo": {
+    "slug": "barrios-vera",
+    "tour": "ATP",
+    "original_name": "Barrios Vera Marcelo Tomas"
+  },
+  "luca nardi": {
+    "slug": "nardi-e2cda",
+    "tour": "ATP",
+    "original_name": "Nardi Luca"
+  },
+  "brandon holt": {
+    "slug": "holt-669c7",
+    "tour": "ATP",
+    "original_name": "Holt Brandon"
+  },
+  "gael monfils": {
+    "slug": "monfils",
+    "tour": "ATP",
+    "original_name": "Monfils Gael"
+  },
+  "jordan thompson": {
+    "slug": "thompson-46e89",
+    "tour": "ATP",
+    "original_name": "Thompson Jordan"
+  },
+  "shintaro mochizuki": {
+    "slug": "mochizuki-f2487",
+    "tour": "ATP",
+    "original_name": "Mochizuki Shintaro"
+  },
+  "mackenzie mcdonald": {
+    "slug": "mcdonald-4d935",
+    "tour": "ATP",
+    "original_name": "McDonald Mackenzie"
+  },
+  "rinky hijikata": {
+    "slug": "hijikata",
+    "tour": "ATP",
+    "original_name": "Hijikata Rinky"
+  },
+  "patrick kypson": {
+    "slug": "kypson",
+    "tour": "ATP",
+    "original_name": "Kypson Patrick"
+  },
+  "david goffin": {
+    "slug": "goffin",
+    "tour": "ATP",
+    "original_name": "Goffin David"
+  },
+  "christopher o'connell": {
+    "slug": "o-connell-020b8",
+    "tour": "ATP",
+    "original_name": "O'Connell Christopher"
+  },
+  "elmer moller": {
+    "slug": "moller-6ea06",
+    "tour": "ATP",
+    "original_name": "Moller Elmer"
+  },
+  "bu yunchaokete": {
+    "slug": "yunchaokete",
+    "tour": "ATP",
+    "original_name": "Yunchaokete Bu"
+  },
+  "billy harris": {
+    "slug": "harris-5a94c",
+    "tour": "ATP",
+    "original_name": "Harris Billy"
+  },
+  "hsin tseng chun": {
+    "slug": "tseng-5c1bc",
+    "tour": "ATP",
+    "original_name": "Tseng Chun Hsin"
+  },
+  "borna coric": {
+    "slug": "coric",
+    "tour": "ATP",
+    "original_name": "Coric Borna"
+  },
+  "jan choinski": {
+    "slug": "choinski",
+    "tour": "ATP",
+    "original_name": "Choinski Jan"
+  },
+  "dusan lajovic": {
+    "slug": "lajovic",
+    "tour": "ATP",
+    "original_name": "Lajovic Dusan"
+  },
+  "otto virtanen": {
+    "slug": "virtanen-7d161",
+    "tour": "ATP",
+    "original_name": "Virtanen Otto"
+  },
+  "dino prizmic": {
+    "slug": "prizmic",
+    "tour": "ATP",
+    "original_name": "Prizmic Dino"
+  },
+  "kyrian jacquet": {
+    "slug": "jacquet-d2059",
+    "tour": "ATP",
+    "original_name": "Jacquet Kyrian"
+  },
+  "vilius gaubas": {
+    "slug": "gaubas",
+    "tour": "ATP",
+    "original_name": "Gaubas Vilius"
+  },
+  "marco trungelliti": {
+    "slug": "trungelliti",
+    "tour": "ATP",
+    "original_name": "Trungelliti Marco"
+  },
+  "sebastian ofner": {
+    "slug": "ofner-44428",
+    "tour": "ATP",
+    "original_name": "Ofner Sebastian"
+  },
+  "coleman wong": {
+    "slug": "wong-d3ead",
+    "tour": "ATP",
+    "original_name": "Wong Coleman"
+  },
+  "nicolas jarry": {
+    "slug": "jarry",
+    "tour": "ATP",
+    "original_name": "Jarry Nicolas"
+  },
+  "moez echargui": {
+    "slug": "echargui",
+    "tour": "ATP",
+    "original_name": "Echargui Moez"
+  },
+  "nicolai budkov kjaer": {
+    "slug": "budkov-kjaer",
+    "tour": "ATP",
+    "original_name": "Budkov Kjaer Nicolai"
+  },
+  "lukas klein": {
+    "slug": "klein-88a5e",
+    "tour": "ATP",
+    "original_name": "Klein Lukas"
+  },
+  "hugo dellien": {
+    "slug": "dellien",
+    "tour": "ATP",
+    "original_name": "Dellien Hugo"
+  },
+  "andrea pellegrino": {
+    "slug": "pellegrino-fd654",
+    "tour": "ATP",
+    "original_name": "Pellegrino Andrea"
+  },
+  "stan wawrinka": {
+    "slug": "wawrinka-ffdb9",
+    "tour": "ATP",
+    "original_name": "Wawrinka Stan"
+  },
+  "francesco passaro": {
+    "slug": "passaro-5f6f1",
+    "tour": "ATP",
+    "original_name": "Passaro Francesco"
+  },
+  "francesco maestrelli": {
+    "slug": "maestrelli",
+    "tour": "ATP",
+    "original_name": "Maestrelli Francesco"
+  },
+  "ugo blanchet": {
+    "slug": "blanchet",
+    "tour": "ATP",
+    "original_name": "Blanchet Ugo"
+  },
+  "zachary svajda": {
+    "slug": "svajda",
+    "tour": "ATP",
+    "original_name": "Svajda Zachary"
+  },
+  "sho shimabukuro": {
+    "slug": "shimabukuro",
+    "tour": "ATP",
+    "original_name": "Shimabukuro Sho"
+  },
+  "liam draxl": {
+    "slug": "draxl",
+    "tour": "ATP",
+    "original_name": "Draxl Liam"
+  },
+  "daniel vallejo adolfo": {
+    "slug": "vallejo-d7859",
+    "tour": "ATP",
+    "original_name": "Vallejo Adolfo Daniel"
+  },
+  "roberto carballes baena": {
+    "slug": "carballes-baena",
+    "tour": "ATP",
+    "original_name": "Carballes Baena Roberto"
+  },
+  "colton smith": {
+    "slug": "smith-4a480",
+    "tour": "ATP",
+    "original_name": "Smith Colton"
+  },
+  "martin landaluce": {
+    "slug": "landaluce-84126",
+    "tour": "ATP",
+    "original_name": "Landaluce Martin"
+  },
+  "rafael jodar": {
+    "slug": "jodar",
+    "tour": "ATP",
+    "original_name": "Jodar Rafael"
+  },
+  "jaime faria": {
+    "slug": "faria-4754c",
+    "tour": "ATP",
+    "original_name": "Faria Jaime"
+  },
+  "matteo gigante": {
+    "slug": "gigante-f720d",
+    "tour": "ATP",
+    "original_name": "Gigante Matteo"
+  },
+  "mark lajal": {
+    "slug": "lajal",
+    "tour": "ATP",
+    "original_name": "Lajal Mark"
+  },
+  "titouan droguet": {
+    "slug": "droguet",
+    "tour": "ATP",
+    "original_name": "Droguet Titouan"
+  },
+  "giulio zeppieri": {
+    "slug": "zeppieri",
+    "tour": "ATP",
+    "original_name": "Zeppieri Giulio"
+  },
+  "pierre-hugues herbert": {
+    "slug": "herbert-fa5ad",
+    "tour": "ATP",
+    "original_name": "Herbert Pierre-Hugues"
+  },
+  "henrique rocha": {
+    "slug": "rocha-0492a",
+    "tour": "ATP",
+    "original_name": "Rocha Henrique"
+  },
+  "harold mayot": {
+    "slug": "mayot",
+    "tour": "ATP",
+    "original_name": "Mayot Harold"
+  },
+  "guy den ouden": {
+    "slug": "den-ouden",
+    "tour": "ATP",
+    "original_name": "Den Ouden Guy"
+  },
+  "pablo ficovich juan": {
+    "slug": "ficovich",
+    "tour": "ATP",
+    "original_name": "Ficovich Juan Pablo"
+  },
+  "yosuke watanuki": {
+    "slug": "watanuki-223ad",
+    "tour": "ATP",
+    "original_name": "Watanuki Yosuke"
+  },
+  "luka mikrut": {
+    "slug": "mikrut",
+    "tour": "ATP",
+    "original_name": "Mikrut Luka"
+  },
+  "daniel merida aguilar": {
+    "slug": "merida-aguilar",
+    "tour": "ATP",
+    "original_name": "Merida Aguilar Daniel"
+  },
+  "luca van assche": {
+    "slug": "van-assche",
+    "tour": "ATP",
+    "original_name": "Van Assche Luca"
+  },
+  "vitaliy sachko": {
+    "slug": "sachko",
+    "tour": "ATP",
+    "original_name": "Sachko Vitaliy"
+  },
+  "jurij rodionov": {
+    "slug": "rodionov-f5e38",
+    "tour": "ATP",
+    "original_name": "Rodionov Jurij"
+  },
+  "yibing wu": {
+    "slug": "wu-9762d",
+    "tour": "ATP",
+    "original_name": "Wu Yibing"
+  },
+  "nicolas mejia": {
+    "slug": "mejia-a7d27",
+    "tour": "ATP",
+    "original_name": "Mejia Nicolas"
+  },
+  "zsombor piros": {
+    "slug": "piros",
+    "tour": "ATP",
+    "original_name": "Piros Zsombor"
+  },
+  "alex bolt": {
+    "slug": "bolt-fa7eb",
+    "tour": "ATP",
+    "original_name": "Bolt Alex"
+  },
+  "roman safiullin": {
+    "slug": "safiullin",
+    "tour": "ATP",
+    "original_name": "Safiullin Roman"
+  },
+  "james mccabe": {
+    "slug": "mccabe-b71c6",
+    "tour": "ATP",
+    "original_name": "McCabe James"
+  },
+  "michael zheng": {
+    "slug": "zheng-c91db",
+    "tour": "ATP",
+    "original_name": "Zheng Michael"
+  },
+  "elias ymer": {
+    "slug": "ymer",
+    "tour": "ATP",
+    "original_name": "Ymer Elias"
+  },
+  "zdenek kolar": {
+    "slug": "kolar-d6d52",
+    "tour": "ATP",
+    "original_name": "Kolar Zdenek"
+  },
+  "(2003) damm martin": {
+    "slug": "damm-4f98a",
+    "tour": "ATP",
+    "original_name": "Damm Martin (2003)"
+  },
+  "jay clarke": {
+    "slug": "clarke-60a59",
+    "tour": "ATP",
+    "original_name": "Clarke Jay"
+  },
+  "hugo grenier": {
+    "slug": "grenier-baaf0",
+    "tour": "ATP",
+    "original_name": "Grenier Hugo"
+  },
+  "leandro riedi": {
+    "slug": "riedi-a3a3d",
+    "tour": "ATP",
+    "original_name": "Riedi Leandro"
+  },
+  "tristan boyer": {
+    "slug": "boyer-64ede",
+    "tour": "ATP",
+    "original_name": "Boyer Tristan"
+  },
+  "dane sweeny": {
+    "slug": "sweeny",
+    "tour": "ATP",
+    "original_name": "Sweeny Dane"
+  },
+  "timofey skatov": {
+    "slug": "skatov",
+    "tour": "ATP",
+    "original_name": "Skatov Timofey"
+  },
+  "justin engel": {
+    "slug": "engel-6e09f",
+    "tour": "ATP",
+    "original_name": "Engel Justin"
+  },
+  "bernard tomic": {
+    "slug": "tomic-4ca3d",
+    "tour": "ATP",
+    "original_name": "Tomic Bernard"
+  },
+  "arthur fery": {
+    "slug": "fery",
+    "tour": "ATP",
+    "original_name": "Fery Arthur"
+  },
+  "jerome kym": {
+    "slug": "kym",
+    "tour": "ATP",
+    "original_name": "Kym Jerome"
+  },
+  "daniel evans": {
+    "slug": "evans-cf2af",
+    "tour": "ATP",
+    "original_name": "Evans Daniel"
+  },
+  "alex barrena": {
+    "slug": "barrena-f6642",
+    "tour": "ATP",
+    "original_name": "Barrena Alex"
+  },
+  "stefano travaglia": {
+    "slug": "travaglia",
+    "tour": "ATP",
+    "original_name": "Travaglia Stefano"
+  },
+  "agustin gomez federico": {
+    "slug": "gomez-e101b",
+    "tour": "ATP",
+    "original_name": "Gomez Federico Agustin"
+  },
+  "august holmgren": {
+    "slug": "holmgren-a5794",
+    "tour": "ATP",
+    "original_name": "Holmgren August"
+  },
+  "jason kubler": {
+    "slug": "kubler-21879",
+    "tour": "ATP",
+    "original_name": "Kubler Jason"
+  },
+  "alvaro guillen meza": {
+    "slug": "guillen-meza",
+    "tour": "ATP",
+    "original_name": "Guillen Meza Alvaro"
+  },
+  "thiago monteiro": {
+    "slug": "monteiro-f1500",
+    "tour": "ATP",
+    "original_name": "Monteiro Thiago"
+  },
+  "jack pinnington jones": {
+    "slug": "pinnington-jones",
+    "tour": "ATP",
+    "original_name": "Pinnington Jones Jack"
+  },
+  "arthur gea": {
+    "slug": "gea",
+    "tour": "ATP",
+    "original_name": "Gea Arthur"
+  },
+  "sascha gueymard wayenburg": {
+    "slug": "gueymard-wayenburg",
+    "tour": "ATP",
+    "original_name": "Gueymard Wayenburg Sascha"
+  },
+  "daniil glinka": {
+    "slug": "glinka",
+    "tour": "ATP",
+    "original_name": "Glinka Daniil"
+  },
+  "dan added": {
+    "slug": "added",
+    "tour": "ATP",
+    "original_name": "Added Dan"
+  },
+  "clement tabur": {
+    "slug": "tabur",
+    "tour": "ATP",
+    "original_name": "Tabur Clement"
+  },
+  "rei sakamoto": {
+    "slug": "sakamoto-9c9d5",
+    "tour": "ATP",
+    "original_name": "Sakamoto Rei"
+  },
+  "oliver crawford": {
+    "slug": "crawford-71058",
+    "tour": "ATP",
+    "original_name": "Crawford Oliver"
+  },
+  "mitchell krueger": {
+    "slug": "krueger-d6035",
+    "tour": "ATP",
+    "original_name": "Krueger Mitchell"
+  },
+  "alex molcan": {
+    "slug": "molcan",
+    "tour": "ATP",
+    "original_name": "Molcan Alex"
+  },
+  "lucas reis da silva joao": {
+    "slug": "reis-da-silva",
+    "tour": "ATP",
+    "original_name": "Reis Da Silva Joao Lucas"
+  },
+  "arnaud bailly gilles": {
+    "slug": "bailly-a8c26",
+    "tour": "ATP",
+    "original_name": "Bailly Gilles Arnaud"
+  },
+  "chris rodesch": {
+    "slug": "rodesch",
+    "tour": "ATP",
+    "original_name": "Rodesch Chris"
+  },
+  "carlos prado angelo juan": {
+    "slug": "prado-angelo",
+    "tour": "ATP",
+    "original_name": "Prado Angelo Juan Carlos"
+  },
+  "lorenzo giustino": {
+    "slug": "giustino-1d545",
+    "tour": "ATP",
+    "original_name": "Giustino Lorenzo"
+  },
+  "george loffhagen": {
+    "slug": "loffhagen",
+    "tour": "ATP",
+    "original_name": "Loffhagen George"
+  },
+  "pablo llamas ruiz": {
+    "slug": "llamas-ruiz",
+    "tour": "ATP",
+    "original_name": "Llamas Ruiz Pablo"
+  },
+  "alexis galarneau": {
+    "slug": "galarneau-32e1f",
+    "tour": "ATP",
+    "original_name": "Galarneau Alexis"
+  },
+  "gonzalo bueno": {
+    "slug": "bueno-01b7e",
+    "tour": "ATP",
+    "original_name": "Bueno Gonzalo"
+  },
+  "johannus monday": {
+    "slug": "monday",
+    "tour": "ATP",
+    "original_name": "Monday Johannus"
+  },
+  "thiago seyboth wild": {
+    "slug": "seyboth-wild",
+    "tour": "ATP",
+    "original_name": "Seyboth Wild Thiago"
+  },
+  "luka pavlovic": {
+    "slug": "pavlovic-c059e",
+    "tour": "ATP",
+    "original_name": "Pavlovic Luka"
+  },
+  "ryan peniston": {
+    "slug": "peniston",
+    "tour": "ATP",
+    "original_name": "Peniston Ryan"
+  },
+  "hsiou hsu yu": {
+    "slug": "hsu-b2ce0",
+    "tour": "ATP",
+    "original_name": "Hsu Yu Hsiou"
+  },
+  "lloyd harris": {
+    "slug": "harris-9f62b",
+    "tour": "ATP",
+    "original_name": "Harris Lloyd"
+  },
+  "dmitry popko": {
+    "slug": "popko",
+    "tour": "ATP",
+    "original_name": "Popko Dmitry"
+  },
+  "nerman fatic": {
+    "slug": "fatic-cddef",
+    "tour": "ATP",
+    "original_name": "Fatic Nerman"
+  },
+  "murphy cassone": {
+    "slug": "cassone",
+    "tour": "ATP",
+    "original_name": "Cassone Murphy"
+  },
+  "felipe meligeni rodrigues alves": {
+    "slug": "meligeni-rodrigues-alves",
+    "tour": "ATP",
+    "original_name": "Meligeni Rodrigues Alves Felipe"
+  },
+  "lukas neumayer": {
+    "slug": "neumayer",
+    "tour": "ATP",
+    "original_name": "Neumayer Lukas"
+  },
+  "santiago rodriguez taverna": {
+    "slug": "rodriguez-taverna",
+    "tour": "ATP",
+    "original_name": "Rodriguez Taverna Santiago"
+  },
+  "michael mmoh": {
+    "slug": "mmoh",
+    "tour": "ATP",
+    "original_name": "Mmoh Michael"
+  },
+  "arthur bouquier": {
+    "slug": "bouquier",
+    "tour": "ATP",
+    "original_name": "Bouquier Arthur"
+  },
+  "marco cecchinato": {
+    "slug": "cecchinato",
+    "tour": "ATP",
+    "original_name": "Cecchinato Marco"
+  },
+  "alberto olivieri genaro": {
+    "slug": "olivieri-ff875",
+    "tour": "ATP",
+    "original_name": "Olivieri Genaro Alberto"
+  },
+  "lautaro midon": {
+    "slug": "midon",
+    "tour": "ATP",
+    "original_name": "Midon Lautaro"
+  },
+  "andrea collarini": {
+    "slug": "collarini",
+    "tour": "ATP",
+    "original_name": "Collarini Andrea"
+  },
+  "rodrigo pacheco mendez": {
+    "slug": "pacheco-mendez",
+    "tour": "ATP",
+    "original_name": "Pacheco Mendez Rodrigo"
+  },
+  "matej dodig": {
+    "slug": "dodig-b6156",
+    "tour": "ATP",
+    "original_name": "Dodig Matej"
+  },
+  "rio noguchi": {
+    "slug": "noguchi-08bde",
+    "tour": "ATP",
+    "original_name": "Noguchi Rio"
+  },
+  "federico cina": {
+    "slug": "cina",
+    "tour": "ATP",
+    "original_name": "Cina Federico"
+  },
+  "yi zhou": {
+    "slug": "zhou-472f7",
+    "tour": "ATP",
+    "original_name": "Zhou Yi"
+  },
+  "marko topo": {
+    "slug": "topo-77408",
+    "tour": "ATP",
+    "original_name": "Topo Marko"
+  },
+  "kei nishikori": {
+    "slug": "nishikori",
+    "tour": "ATP",
+    "original_name": "Nishikori Kei"
+  },
+  "gustavo heide": {
+    "slug": "heide-17a3d",
+    "tour": "ATP",
+    "original_name": "Heide Gustavo"
+  },
+  "nishesh basavareddy": {
+    "slug": "basavareddy",
+    "tour": "ATP",
+    "original_name": "Basavareddy Nishesh"
+  },
+  "murkel dellien": {
+    "slug": "dellien-e101c",
+    "tour": "ATP",
+    "original_name": "Dellien Murkel"
+  },
+  "pablo varillas juan": {
+    "slug": "varillas",
+    "tour": "ATP",
+    "original_name": "Varillas Juan Pablo"
+  },
+  "joel schwaerzler": {
+    "slug": "schwaerzler",
+    "tour": "ATP",
+    "original_name": "Schwaerzler Joel"
+  },
+  "alejandro moro canas": {
+    "slug": "moro-canas",
+    "tour": "ATP",
+    "original_name": "Moro Canas Alejandro"
+  },
+  "facundo diaz acosta": {
+    "slug": "diaz-acosta",
+    "tour": "ATP",
+    "original_name": "Diaz Acosta Facundo"
+  },
+  "kaichi uchida": {
+    "slug": "uchida-ea757",
+    "tour": "ATP",
+    "original_name": "Uchida Kaichi"
+  },
+  "hady habib": {
+    "slug": "habib",
+    "tour": "ATP",
+    "original_name": "Habib Hady"
+  },
+  "max houkes": {
+    "slug": "houkes",
+    "tour": "ATP",
+    "original_name": "Houkes Max"
+  },
+  "aryna sabalenka": {
+    "slug": "sabalenka",
+    "tour": "WTA",
+    "original_name": "Sabalenka Aryna"
+  },
+  "iga swiatek": {
+    "slug": "swiatek",
+    "tour": "WTA",
+    "original_name": "Swiatek Iga"
+  },
+  "coco gauff": {
+    "slug": "gauff",
+    "tour": "WTA",
+    "original_name": "Gauff Coco"
+  },
+  "amanda anisimova": {
+    "slug": "anisimova-3be62",
+    "tour": "WTA",
+    "original_name": "Anisimova Amanda"
+  },
+  "elena rybakina": {
+    "slug": "rybakina",
+    "tour": "WTA",
+    "original_name": "Rybakina Elena"
+  },
+  "jessica pegula": {
+    "slug": "pegula",
+    "tour": "WTA",
+    "original_name": "Pegula Jessica"
+  },
+  "jasmine paolini": {
+    "slug": "paolini-4af25",
+    "tour": "WTA",
+    "original_name": "Paolini Jasmine"
+  },
+  "mirra andreeva": {
+    "slug": "andreeva-7d55d",
+    "tour": "WTA",
+    "original_name": "Andreeva Mirra"
+  },
+  "madison keys": {
+    "slug": "keys",
+    "tour": "WTA",
+    "original_name": "Keys Madison"
+  },
+  "belinda bencic": {
+    "slug": "bencic",
+    "tour": "WTA",
+    "original_name": "Bencic Belinda"
+  },
+  "ekaterina alexandrova": {
+    "slug": "alexandrova-3181a",
+    "tour": "WTA",
+    "original_name": "Alexandrova Ekaterina"
+  },
+  "elina svitolina": {
+    "slug": "svitolina",
+    "tour": "WTA",
+    "original_name": "Svitolina Elina"
+  },
+  "linda noskova": {
+    "slug": "noskova",
+    "tour": "WTA",
+    "original_name": "Noskova Linda"
+  },
+  "clara tauson": {
+    "slug": "tauson",
+    "tour": "WTA",
+    "original_name": "Tauson Clara"
+  },
+  "emma navarro": {
+    "slug": "navarro-d5bcf",
+    "tour": "WTA",
+    "original_name": "Navarro Emma"
+  },
+  "naomi osaka": {
+    "slug": "osaka-fa603",
+    "tour": "WTA",
+    "original_name": "Osaka Naomi"
+  },
+  "victoria mboko": {
+    "slug": "mboko-7ca19",
+    "tour": "WTA",
+    "original_name": "Mboko Victoria"
+  },
+  "liudmila samsonova": {
+    "slug": "samsonova",
+    "tour": "WTA",
+    "original_name": "Samsonova Liudmila"
+  },
+  "karolina muchova": {
+    "slug": "muchova",
+    "tour": "WTA",
+    "original_name": "Muchova Karolina"
+  },
+  "marta kostyuk": {
+    "slug": "kostyuk-ea2bf",
+    "tour": "WTA",
+    "original_name": "Kostyuk Marta"
+  },
+  "elise mertens": {
+    "slug": "mertens-f8826",
+    "tour": "WTA",
+    "original_name": "Mertens Elise"
+  },
+  "leylah fernandez": {
+    "slug": "fernandez-8411c",
+    "tour": "WTA",
+    "original_name": "Fernandez Leylah"
+  },
+  "diana shnaider": {
+    "slug": "shnaider-51347",
+    "tour": "WTA",
+    "original_name": "Shnaider Diana"
+  },
+  "jelena ostapenko": {
+    "slug": "ostapenko-4d156",
+    "tour": "WTA",
+    "original_name": "Ostapenko Jelena"
+  },
+  "qinwen zheng": {
+    "slug": "zheng-13301",
+    "tour": "WTA",
+    "original_name": "Zheng Qinwen"
+  },
+  "paula badosa": {
+    "slug": "badosa",
+    "tour": "WTA",
+    "original_name": "Badosa Paula"
+  },
+  "dayana yastremska": {
+    "slug": "yastremska",
+    "tour": "WTA",
+    "original_name": "Yastremska Dayana"
+  },
+  "sofia kenin": {
+    "slug": "kenin-5a3a8",
+    "tour": "WTA",
+    "original_name": "Kenin Sofia"
+  },
+  "emma raducanu": {
+    "slug": "raducanu",
+    "tour": "WTA",
+    "original_name": "Raducanu Emma"
+  },
+  "iva jovic": {
+    "slug": "jovic-19208",
+    "tour": "WTA",
+    "original_name": "Jovic Iva"
+  },
+  "veronika kudermetova": {
+    "slug": "kudermetova",
+    "tour": "WTA",
+    "original_name": "Kudermetova Veronika"
+  },
+  "maya joint": {
+    "slug": "joint",
+    "tour": "WTA",
+    "original_name": "Joint Maya"
+  },
+  "anna kalinskaya": {
+    "slug": "kalinskaya",
+    "tour": "WTA",
+    "original_name": "Kalinskaya Anna"
+  },
+  "lois boisson": {
+    "slug": "boisson-c149c",
+    "tour": "WTA",
+    "original_name": "Boisson Lois"
+  },
+  "mccartney kessler": {
+    "slug": "kessler-09366",
+    "tour": "WTA",
+    "original_name": "Kessler McCartney"
+  },
+  "jaqueline cristian": {
+    "slug": "cristian",
+    "tour": "WTA",
+    "original_name": "Cristian Jaqueline"
+  },
+  "ann li": {
+    "slug": "li-f8666",
+    "tour": "WTA",
+    "original_name": "Li Ann"
+  },
+  "eva lys": {
+    "slug": "lys",
+    "tour": "WTA",
+    "original_name": "Lys Eva"
+  },
+  "jessica bouzas maneiro": {
+    "slug": "bouzas-maneiro",
+    "tour": "WTA",
+    "original_name": "Bouzas Maneiro Jessica"
+  },
+  "sorana-mihaela cirstea": {
+    "slug": "cirstea",
+    "tour": "WTA",
+    "original_name": "Cirstea Sorana-Mihaela"
+  },
+  "tatiana maria": {
+    "slug": "maria-8ad07",
+    "tour": "WTA",
+    "original_name": "Maria Tatiana"
+  },
+  "xinyu wang": {
+    "slug": "wang-77549",
+    "tour": "WTA",
+    "original_name": "Wang Xinyu"
+  },
+  "anastasia pavlyuchenkova": {
+    "slug": "pavlyuchenkova",
+    "tour": "WTA",
+    "original_name": "Pavlyuchenkova Anastasia"
+  },
+  "marie bouzkova": {
+    "slug": "bouzkova",
+    "tour": "WTA",
+    "original_name": "Bouzkova Marie"
+  },
+  "katerina siniakova": {
+    "slug": "siniakova",
+    "tour": "WTA",
+    "original_name": "Siniakova Katerina"
+  },
+  "laura siegemund": {
+    "slug": "siegemund",
+    "tour": "WTA",
+    "original_name": "Siegemund Laura"
+  },
+  "darya kasatkina": {
+    "slug": "kasatkina",
+    "tour": "WTA",
+    "original_name": "Kasatkina Darya"
+  },
+  "alexandra eala": {
+    "slug": "eala",
+    "tour": "WTA",
+    "original_name": "Eala Alexandra"
+  },
+  "emiliana arango": {
+    "slug": "arango-c6512",
+    "tour": "WTA",
+    "original_name": "Arango Emiliana"
+  },
+  "cristina bucsa": {
+    "slug": "bucsa",
+    "tour": "WTA",
+    "original_name": "Bucsa Cristina"
+  },
+  "maria sakkari": {
+    "slug": "sakkari",
+    "tour": "WTA",
+    "original_name": "Sakkari Maria"
+  },
+  "magda linette": {
+    "slug": "linette",
+    "tour": "WTA",
+    "original_name": "Linette Magda"
+  },
+  "anastasia potapova": {
+    "slug": "potapova-ae536",
+    "tour": "WTA",
+    "original_name": "Potapova Anastasia"
+  },
+  "barbora krejcikova": {
+    "slug": "krejcikova",
+    "tour": "WTA",
+    "original_name": "Krejcikova Barbora"
+  },
+  "janice tjen": {
+    "slug": "tjen",
+    "tour": "WTA",
+    "original_name": "Tjen Janice"
+  },
+  "magdalena frech": {
+    "slug": "frech",
+    "tour": "WTA",
+    "original_name": "Frech Magdalena"
+  },
+  "elsa jacquemot": {
+    "slug": "jacquemot",
+    "tour": "WTA",
+    "original_name": "Jacquemot Elsa"
+  },
+  "beatriz haddad maia": {
+    "slug": "haddad-maia",
+    "tour": "WTA",
+    "original_name": "Haddad Maia Beatriz"
+  },
+  "tereza valentova": {
+    "slug": "valentova",
+    "tour": "WTA",
+    "original_name": "Valentova Tereza"
+  },
+  "ashlyn krueger": {
+    "slug": "krueger-7fc13",
+    "tour": "WTA",
+    "original_name": "Krueger Ashlyn"
+  },
+  "anna blinkova": {
+    "slug": "blinkova",
+    "tour": "WTA",
+    "original_name": "Blinkova Anna"
+  },
+  "sonay kartal": {
+    "slug": "kartal",
+    "tour": "WTA",
+    "original_name": "Kartal Sonay"
+  },
+  "solana sierra": {
+    "slug": "sierra-ab6b4",
+    "tour": "WTA",
+    "original_name": "Sierra Solana"
+  },
+  "danielle collins": {
+    "slug": "collins-f1bd8",
+    "tour": "WTA",
+    "original_name": "Collins Danielle"
+  },
+  "hailey baptiste": {
+    "slug": "baptiste-30189",
+    "tour": "WTA",
+    "original_name": "Baptiste Hailey"
+  },
+  "peyton stearns": {
+    "slug": "stearns-1fdf2",
+    "tour": "WTA",
+    "original_name": "Stearns Peyton"
+  },
+  "olga danilovic": {
+    "slug": "danilovic-ae861",
+    "tour": "WTA",
+    "original_name": "Danilovic Olga"
+  },
+  "francesca jones": {
+    "slug": "jones-68698",
+    "tour": "WTA",
+    "original_name": "Jones Francesca"
+  },
+  "donna vekic": {
+    "slug": "vekic",
+    "tour": "WTA",
+    "original_name": "Vekic Donna"
+  },
+  "antonia ruzic": {
+    "slug": "ruzic-76c9f",
+    "tour": "WTA",
+    "original_name": "Ruzic Antonia"
+  },
+  "rebecca sramkova": {
+    "slug": "sramkova-86855",
+    "tour": "WTA",
+    "original_name": "Sramkova Rebecca"
+  },
+  "shuai zhang": {
+    "slug": "zhang-7824a",
+    "tour": "WTA",
+    "original_name": "Zhang Shuai"
+  },
+  "varvara gracheva": {
+    "slug": "gracheva",
+    "tour": "WTA",
+    "original_name": "Gracheva Varvara"
+  },
+  "anna bondar": {
+    "slug": "bondar-4cb3e",
+    "tour": "WTA",
+    "original_name": "Bondar Anna"
+  },
+  "ajla tomljanovic": {
+    "slug": "tomljanovic",
+    "tour": "WTA",
+    "original_name": "Tomljanovic Ajla"
+  },
+  "petra marcinko": {
+    "slug": "marcinko",
+    "tour": "WTA",
+    "original_name": "Marcinko Petra"
+  },
+  "ella seidel": {
+    "slug": "seidel",
+    "tour": "WTA",
+    "original_name": "Seidel Ella"
+  },
+  "gabriela ruse elena": {
+    "slug": "ruse",
+    "tour": "WTA",
+    "original_name": "Ruse Elena Gabriela"
+  },
+  "elisabetta cocciaretto": {
+    "slug": "cocciaretto",
+    "tour": "WTA",
+    "original_name": "Cocciaretto Elisabetta"
+  },
+  "viktorija golubic": {
+    "slug": "golubic",
+    "tour": "WTA",
+    "original_name": "Golubic Viktorija"
+  },
+  "camila osorio": {
+    "slug": "osorio-16592",
+    "tour": "WTA",
+    "original_name": "Osorio Camila"
+  },
+  "caty mcnally": {
+    "slug": "mcnally-c14af",
+    "tour": "WTA",
+    "original_name": "McNally Caty"
+  },
+  "renata zarazua": {
+    "slug": "zarazua",
+    "tour": "WTA",
+    "original_name": "Zarazua Renata"
+  },
+  "lulu sun": {
+    "slug": "sun-41fd9",
+    "tour": "WTA",
+    "original_name": "Sun Lulu"
+  },
+  "simona waltert": {
+    "slug": "waltert",
+    "tour": "WTA",
+    "original_name": "Waltert Simona"
+  },
+  "moyuka uchijima": {
+    "slug": "uchijima",
+    "tour": "WTA",
+    "original_name": "Uchijima Moyuka"
+  },
+  "sara bejlek": {
+    "slug": "bejlek",
+    "tour": "WTA",
+    "original_name": "Bejlek Sara"
+  },
+  "panna udvardy": {
+    "slug": "udvardy",
+    "tour": "WTA",
+    "original_name": "Udvardy Panna"
+  },
+  "oleksandra oliynykova": {
+    "slug": "oliynykova",
+    "tour": "WTA",
+    "original_name": "Oliynykova Oleksandra"
+  },
+  "kamilla rakhimova": {
+    "slug": "rakhimova-29cc5",
+    "tour": "WTA",
+    "original_name": "Rakhimova Kamilla"
+  },
+  "julia grabher": {
+    "slug": "grabher-af483",
+    "tour": "WTA",
+    "original_name": "Grabher Julia"
+  },
+  "dalma galfi": {
+    "slug": "galfi",
+    "tour": "WTA",
+    "original_name": "Galfi Dalma"
+  },
+  "katie volynets": {
+    "slug": "volynets",
+    "tour": "WTA",
+    "original_name": "Volynets Katie"
+  },
+  "suzan lamens": {
+    "slug": "lamens",
+    "tour": "WTA",
+    "original_name": "Lamens Suzan"
+  },
+  "darja semenistaja": {
+    "slug": "semenistaja",
+    "tour": "WTA",
+    "original_name": "Semenistaja Darja"
+  },
+  "kaja juvan": {
+    "slug": "juvan",
+    "tour": "WTA",
+    "original_name": "Juvan Kaja"
+  },
+  "oksana selekhmeteva": {
+    "slug": "selekhmeteva",
+    "tour": "WTA",
+    "original_name": "Selekhmeteva Oksana"
+  },
+  "veronika erjavec": {
+    "slug": "erjavec",
+    "tour": "WTA",
+    "original_name": "Erjavec Veronika"
+  },
+  "alycia parks": {
+    "slug": "parks-bcd85",
+    "tour": "WTA",
+    "original_name": "Parks Alycia"
+  },
+  "leolia jeanjean": {
+    "slug": "jeanjean",
+    "tour": "WTA",
+    "original_name": "Jeanjean Leolia"
+  },
+  "aliaksandra sasnovich": {
+    "slug": "sasnovich",
+    "tour": "WTA",
+    "original_name": "Sasnovich Aliaksandra"
+  },
+  "anastasia zakharova": {
+    "slug": "zakharova-887ba",
+    "tour": "WTA",
+    "original_name": "Zakharova Anastasia"
+  },
+  "sinja kraus": {
+    "slug": "kraus-e1937",
+    "tour": "WTA",
+    "original_name": "Kraus Sinja"
+  },
+  "yulia putintseva": {
+    "slug": "putintseva",
+    "tour": "WTA",
+    "original_name": "Putintseva Yulia"
+  },
+  "lucia bronzetti": {
+    "slug": "bronzetti-89444",
+    "tour": "WTA",
+    "original_name": "Bronzetti Lucia"
+  },
+  "kimberly birrell": {
+    "slug": "birrell-dca33",
+    "tour": "WTA",
+    "original_name": "Birrell Kimberly"
+  },
+  "ons jabeur": {
+    "slug": "jabeur",
+    "tour": "WTA",
+    "original_name": "Jabeur Ons"
+  },
+  "mayar sherif": {
+    "slug": "sherif-78113",
+    "tour": "WTA",
+    "original_name": "Sherif Mayar"
+  },
+  "yulia starodubtseva": {
+    "slug": "starodubtseva",
+    "tour": "WTA",
+    "original_name": "Starodubtseva Yulia"
+  },
+  "caroline dolehide": {
+    "slug": "dolehide-903f7",
+    "tour": "WTA",
+    "original_name": "Dolehide Caroline"
+  },
+  "zeynep sonmez": {
+    "slug": "sonmez-ed11c",
+    "tour": "WTA",
+    "original_name": "Sonmez Zeynep"
+  },
+  "katie boulter": {
+    "slug": "boulter",
+    "tour": "WTA",
+    "original_name": "Boulter Katie"
+  },
+  "victoria jimenez kasintseva": {
+    "slug": "jimenez-kasintseva",
+    "tour": "WTA",
+    "original_name": "Jimenez Kasintseva Victoria"
+  },
+  "rebeka masarova": {
+    "slug": "masarova-66538",
+    "tour": "WTA",
+    "original_name": "Masarova Rebeka"
+  },
+  "taylor townsend": {
+    "slug": "townsend",
+    "tour": "WTA",
+    "original_name": "Townsend Taylor"
+  },
+  "joanna garland": {
+    "slug": "garland-472f9",
+    "tour": "WTA",
+    "original_name": "Garland Joanna"
+  },
+  "sarah rakotomanga rajaonah tiantsoa": {
+    "slug": "rakotomanga-rajaonah",
+    "tour": "WTA",
+    "original_name": "Rakotomanga Rajaonah Tiantsoa Sarah"
+  },
+  "talia gibson": {
+    "slug": "gibson-980e2",
+    "tour": "WTA",
+    "original_name": "Gibson Talia"
+  },
+  "belen teichmann jil": {
+    "slug": "teichmann",
+    "tour": "WTA",
+    "original_name": "Teichmann Jil Belen"
+  },
+  "priscilla hon": {
+    "slug": "hon",
+    "tour": "WTA",
+    "original_name": "Hon Priscilla"
+  },
+  "diane parry": {
+    "slug": "parry-d5e54",
+    "tour": "WTA",
+    "original_name": "Parry Diane"
+  },
+  "greetje minnen": {
+    "slug": "minnen",
+    "tour": "WTA",
+    "original_name": "Minnen Greetje"
+  },
+  "tamara korpatsch": {
+    "slug": "korpatsch",
+    "tour": "WTA",
+    "original_name": "Korpatsch Tamara"
+  },
+  "hanne vandewinkel": {
+    "slug": "vandewinkel",
+    "tour": "WTA",
+    "original_name": "Vandewinkel Hanne"
+  },
+  "nikola bartunkova": {
+    "slug": "bartunkova-db92f",
+    "tour": "WTA",
+    "original_name": "Bartunkova Nikola"
+  },
+  "marina stakusic": {
+    "slug": "stakusic-058ab",
+    "tour": "WTA",
+    "original_name": "Stakusic Marina"
+  },
+  "viktoriya tomova": {
+    "slug": "tomova",
+    "tour": "WTA",
+    "original_name": "Tomova Viktoriya"
+  },
+  "kaitlin quevedo": {
+    "slug": "quevedo-e94b5",
+    "tour": "WTA",
+    "original_name": "Quevedo Kaitlin"
+  },
+  "(1998) yuan yue": {
+    "slug": "yuan-eec8f",
+    "tour": "WTA",
+    "original_name": "Yuan Yue (1998)"
+  },
+  "lanlana tararudee": {
+    "slug": "tararudee",
+    "tour": "WTA",
+    "original_name": "Tararudee Lanlana"
+  },
+  "linda fruhvirtova": {
+    "slug": "fruhvirtova",
+    "tour": "WTA",
+    "original_name": "Fruhvirtova Linda"
+  },
+  "arantxa rus": {
+    "slug": "rus-a3117",
+    "tour": "WTA",
+    "original_name": "Rus Arantxa"
+  },
+  "linda klimovicova": {
+    "slug": "klimovicova",
+    "tour": "WTA",
+    "original_name": "Klimovicova Linda"
+  },
+  "katarzyna kawa": {
+    "slug": "kawa",
+    "tour": "WTA",
+    "original_name": "Kawa Katarzyna"
+  },
+  "daria snigur": {
+    "slug": "snigur",
+    "tour": "WTA",
+    "original_name": "Snigur Daria"
+  },
+  "lola radivojevic": {
+    "slug": "radivojevic-fe63e",
+    "tour": "WTA",
+    "original_name": "Radivojevic Lola"
+  },
+  "maria timofeeva": {
+    "slug": "timofeeva-3f1c4",
+    "tour": "WTA",
+    "original_name": "Timofeeva Maria"
+  },
+  "lucrezia stefanini": {
+    "slug": "stefanini-e3656",
+    "tour": "WTA",
+    "original_name": "Stefanini Lucrezia"
+  },
+  "himeno sakatsume": {
+    "slug": "sakatsume",
+    "tour": "WTA",
+    "original_name": "Sakatsume Himeno"
+  },
+  "leyre romero gormaz": {
+    "slug": "romero-gormaz",
+    "tour": "WTA",
+    "original_name": "Romero Gormaz Leyre"
+  },
+  "darja vidmanova": {
+    "slug": "vidmanova",
+    "tour": "WTA",
+    "original_name": "Vidmanova Darja"
+  },
+  "sofia costoulas": {
+    "slug": "costoulas",
+    "tour": "WTA",
+    "original_name": "Costoulas Sofia"
+  },
+  "dominika salkova": {
+    "slug": "salkova",
+    "tour": "WTA",
+    "original_name": "Salkova Dominika"
+  },
+  "maja chwalinska": {
+    "slug": "chwalinska",
+    "tour": "WTA",
+    "original_name": "Chwalinska Maja"
+  },
+  "varvara lepchenko": {
+    "slug": "lepchenko",
+    "tour": "WTA",
+    "original_name": "Lepchenko Varvara"
+  },
+  "irina begu": {
+    "slug": "begu",
+    "tour": "WTA",
+    "original_name": "Begu Irina"
+  },
+  "viktoria azarenka": {
+    "slug": "azarenka",
+    "tour": "WTA",
+    "original_name": "Azarenka Viktoria"
+  },
+  "elina avanesyan": {
+    "slug": "avanesyan-8de1d",
+    "tour": "WTA",
+    "original_name": "Avanesyan Elina"
+  },
+  "polina kudermetova": {
+    "slug": "kudermetova-9ef1c",
+    "tour": "WTA",
+    "original_name": "Kudermetova Polina"
+  },
+  "tamara zidansek": {
+    "slug": "zidansek",
+    "tour": "WTA",
+    "original_name": "Zidansek Tamara"
+  },
+  "whitney osuigwe": {
+    "slug": "osuigwe",
+    "tour": "WTA",
+    "original_name": "Osuigwe Whitney"
+  },
+  "iryna shymanovich": {
+    "slug": "shymanovich",
+    "tour": "WTA",
+    "original_name": "Shymanovich Iryna"
+  },
+  "lilli tagger": {
+    "slug": "tagger-1a5b1",
+    "tour": "WTA",
+    "original_name": "Tagger Lilli"
+  },
+  "emerson jones": {
+    "slug": "jones-cff84",
+    "tour": "WTA",
+    "original_name": "Jones Emerson"
+  },
+  "anna-lena friedsam": {
+    "slug": "friedsam",
+    "tour": "WTA",
+    "original_name": "Friedsam Anna-Lena"
+  },
+  "astra sharma": {
+    "slug": "sharma-43055",
+    "tour": "WTA",
+    "original_name": "Sharma Astra"
+  },
+  "lourdes carle maria": {
+    "slug": "carle-f03da",
+    "tour": "WTA",
+    "original_name": "Carle Maria Lourdes"
+  },
+  "polina iatcenko": {
+    "slug": "iatcenko",
+    "tour": "WTA",
+    "original_name": "Iatcenko Polina"
+  },
+  "despina papamichail": {
+    "slug": "papamichail",
+    "tour": "WTA",
+    "original_name": "Papamichail Despina"
+  },
+  "alexia todoni anca": {
+    "slug": "todoni",
+    "tour": "WTA",
+    "original_name": "Todoni Anca Alexia"
+  },
+  "alina charaeva": {
+    "slug": "charaeva",
+    "tour": "WTA",
+    "original_name": "Charaeva Alina"
+  },
+  "lin zhu": {
+    "slug": "zhu-a98e2",
+    "tour": "WTA",
+    "original_name": "Zhu Lin"
+  },
+  "nuria brancaccio": {
+    "slug": "brancaccio-a1afd",
+    "tour": "WTA",
+    "original_name": "Brancaccio Nuria"
+  },
+  "jessika ponchet": {
+    "slug": "ponchet",
+    "tour": "WTA",
+    "original_name": "Ponchet Jessika"
+  },
+  "aoi ito": {
+    "slug": "ito-dabf4",
+    "tour": "WTA",
+    "original_name": "Ito Aoi"
+  },
+  "maddison inglis": {
+    "slug": "inglis-cebf9",
+    "tour": "WTA",
+    "original_name": "Inglis Maddison"
+  },
+  "ekaterine gorgodze": {
+    "slug": "gorgodze",
+    "tour": "WTA",
+    "original_name": "Gorgodze Ekaterine"
+  },
+  "harriet dart": {
+    "slug": "dart",
+    "tour": "WTA",
+    "original_name": "Dart Harriet"
+  },
+  "bernarda pera": {
+    "slug": "pera-2fd2b",
+    "tour": "WTA",
+    "original_name": "Pera Bernarda"
+  },
+  "olivia gadecki": {
+    "slug": "gadecki",
+    "tour": "WTA",
+    "original_name": "Gadecki Olivia"
+  },
+  "hanyu guo": {
+    "slug": "guo-8adfa",
+    "tour": "WTA",
+    "original_name": "Guo Hanyu"
+  },
+  "tatiana prozorova": {
+    "slug": "prozorova-04cd5",
+    "tour": "WTA",
+    "original_name": "Prozorova Tatiana"
+  },
+  "carole monnet": {
+    "slug": "monnet",
+    "tour": "WTA",
+    "original_name": "Monnet Carole"
+  },
+  "gabriela knutson": {
+    "slug": "knutson",
+    "tour": "WTA",
+    "original_name": "Knutson Gabriela"
+  },
+  "teodora kostovic": {
+    "slug": "kostovic",
+    "tour": "WTA",
+    "original_name": "Kostovic Teodora"
+  },
+  "louisa chirico": {
+    "slug": "chirico-8dd32",
+    "tour": "WTA",
+    "original_name": "Chirico Louisa"
+  },
+  "anhelina kalinina": {
+    "slug": "kalinina",
+    "tour": "WTA",
+    "original_name": "Kalinina Anhelina"
+  },
+  "julia riera": {
+    "slug": "riera-4b182",
+    "tour": "WTA",
+    "original_name": "Riera Julia"
+  },
+  "elizabeth mandlik": {
+    "slug": "mandlik-a0289",
+    "tour": "WTA",
+    "original_name": "Mandlik Elizabeth"
+  },
+  "andrea lazaro garcia": {
+    "slug": "lazaro-garcia",
+    "tour": "WTA",
+    "original_name": "Lazaro Garcia Andrea"
+  },
+  "xiyu wang": {
+    "slug": "wang-d78f7",
+    "tour": "WTA",
+    "original_name": "Wang Xiyu"
+  },
+  "guiomar maristany zuleta de reales": {
+    "slug": "maristany-zuleta-de-reales",
+    "tour": "WTA",
+    "original_name": "Maristany Zuleta De Reales Guiomar"
+  },
+  "anastasija sevastova": {
+    "slug": "sevastova",
+    "tour": "WTA",
+    "original_name": "Sevastova Anastasija"
+  },
+  "cadence brace": {
+    "slug": "brace",
+    "tour": "WTA",
+    "original_name": "Brace Cadence"
+  },
+  "woo ku yeon": {
+    "slug": "ku-2f72f",
+    "tour": "WTA",
+    "original_name": "Ku Yeon Woo"
+  },
+  "jana fett": {
+    "slug": "fett",
+    "tour": "WTA",
+    "original_name": "Fett Jana"
+  },
+  "elena pridankina": {
+    "slug": "pridankina",
+    "tour": "WTA",
+    "original_name": "Pridankina Elena"
+  },
+  "ena shibahara": {
+    "slug": "shibahara-0dcc9",
+    "tour": "WTA",
+    "original_name": "Shibahara Ena"
+  },
+  "sofia sanchez ana": {
+    "slug": "sanchez-e4e94",
+    "tour": "WTA",
+    "original_name": "Sanchez Ana Sofia"
+  },
+  "anouk koevermans": {
+    "slug": "koevermans-ab6c2",
+    "tour": "WTA",
+    "original_name": "Koevermans Anouk"
+  },
+  "alice rame": {
+    "slug": "rame",
+    "tour": "WTA",
+    "original_name": "Rame Alice"
+  },
+  "clervie ngounoue": {
+    "slug": "ngounoue-8ab66",
+    "tour": "WTA",
+    "original_name": "Ngounoue Clervie"
+  },
+  "mananchaya sawangkaew": {
+    "slug": "sawangkaew-7db4a",
+    "tour": "WTA",
+    "original_name": "Sawangkaew Mananchaya"
+  },
+  "daria saville": {
+    "slug": "saville-a825a",
+    "tour": "WTA",
+    "original_name": "Saville Daria"
+  },
+  "miriam bulgaru": {
+    "slug": "bulgaru",
+    "tour": "WTA",
+    "original_name": "Bulgaru Miriam"
+  },
+  "kayla cross": {
+    "slug": "cross-11d4d",
+    "tour": "WTA",
+    "original_name": "Cross Kayla"
+  },
+  "rebecca marino": {
+    "slug": "marino-ffd7d",
+    "tour": "WTA",
+    "original_name": "Marino Rebecca"
+  },
+  "laura pigossi": {
+    "slug": "pigossi-5e7c8",
+    "tour": "WTA",
+    "original_name": "Pigossi Laura"
+  },
+  "manon leonard": {
+    "slug": "leonard-8f19c",
+    "tour": "WTA",
+    "original_name": "Leonard Manon"
+  },
+  "nao hibino": {
+    "slug": "hibino",
+    "tour": "WTA",
+    "original_name": "Hibino Nao"
+  },
+  "laura samson": {
+    "slug": "samson-587bc",
+    "tour": "WTA",
+    "original_name": "Samson Laura"
+  },
+  "taylah preston": {
+    "slug": "preston-2f931",
+    "tour": "WTA",
+    "original_name": "Preston Taylah"
+  },
+  "lina gjorcheska": {
+    "slug": "gjorcheska",
+    "tour": "WTA",
+    "original_name": "Gjorcheska Lina"
+  },
+  "elvina kalieva": {
+    "slug": "kalieva",
+    "tour": "WTA",
+    "original_name": "Kalieva Elvina"
+  },
+  "arina rodionova": {
+    "slug": "rodionova-46097",
+    "tour": "WTA",
+    "original_name": "Rodionova Arina"
+  },
+  "xinyu gao": {
+    "slug": "gao-5c222",
+    "tour": "WTA",
+    "original_name": "Gao Xinyu"
+  },
+  "suh lee carol young": {
+    "slug": "lee-3f464",
+    "tour": "WTA",
+    "original_name": "Lee Carol Young Suh"
+  },
+  "petra martic": {
+    "slug": "martic",
+    "tour": "WTA",
+    "original_name": "Martic Petra"
+  },
+  "alina korneeva": {
+    "slug": "korneeva-a635d",
+    "tour": "WTA",
+    "original_name": "Korneeva Alina"
+  },
+  "anastasia gasanova": {
+    "slug": "gasanova",
+    "tour": "WTA",
+    "original_name": "Gasanova Anastasia"
+  },
+  "francisca jorge": {
+    "slug": "jorge-fb514",
+    "tour": "WTA",
+    "original_name": "Jorge Francisca"
+  },
+  "silvia ambrosio": {
+    "slug": "ambrosio-e049b",
+    "tour": "WTA",
+    "original_name": "Ambrosio Silvia"
+  },
+  "harmony tan": {
+    "slug": "tan-20ad3",
+    "tour": "WTA",
+    "original_name": "Tan Harmony"
+  },
+  "justina mikulskyte": {
+    "slug": "mikulskyte",
+    "tour": "WTA",
+    "original_name": "Mikulskyte Justina"
+  },
+  "jazmin ortenzi": {
+    "slug": "ortenzi",
+    "tour": "WTA",
+    "original_name": "Ortenzi Jazmin"
+  },
+  "sada nahimana": {
+    "slug": "nahimana",
+    "tour": "WTA",
+    "original_name": "Nahimana Sada"
+  },
+  "viktoria hruncakova": {
+    "slug": "hruncakova",
+    "tour": "WTA",
+    "original_name": "Hruncakova Viktoria"
+  },
+  "luisina giovannini": {
+    "slug": "giovannini-45dca",
+    "tour": "WTA",
+    "original_name": "Giovannini Luisina"
+  },
+  "mary stoiana": {
+    "slug": "stoiana",
+    "tour": "WTA",
+    "original_name": "Stoiana Mary"
+  },
+  "selena janicijevic": {
+    "slug": "janicijevic",
+    "tour": "WTA",
+    "original_name": "Janicijevic Selena"
+  },
+  "eva vedder": {
+    "slug": "vedder",
+    "tour": "WTA",
+    "original_name": "Vedder Eva"
+  },
+  "yexin ma": {
+    "slug": "ma-2d7c9",
+    "tour": "WTA",
+    "original_name": "Ma Yexin"
+  },
+  "camilla rosatello": {
+    "slug": "rosatello",
+    "tour": "WTA",
+    "original_name": "Rosatello Camilla"
+  },
+  "claire liu": {
+    "slug": "liu-53de8",
+    "tour": "WTA",
+    "original_name": "Liu Claire"
+  },
+  "vanessa andreescu bianca": {
+    "slug": "andreescu-281c7",
+    "tour": "WTA",
+    "original_name": "Andreescu Bianca Vanessa"
+  },
+  "jessica pieri": {
+    "slug": "pieri",
+    "tour": "WTA",
+    "original_name": "Pieri Jessica"
+  },
+  "wakana sonobe": {
+    "slug": "sonobe",
+    "tour": "WTA",
+    "original_name": "Sonobe Wakana"
+  },
+  "barbora palicova": {
+    "slug": "palicova",
+    "tour": "WTA",
+    "original_name": "Palicova Barbora"
+  },
+  "aliona bolsova": {
+    "slug": "bolsova",
+    "tour": "WTA",
+    "original_name": "Bolsova Aliona"
+  },
+  "tara wurth": {
+    "slug": "wurth",
+    "tour": "WTA",
+    "original_name": "Wurth Tara"
+  },
+  "mona barthel": {
+    "slug": "barthel-1fad0",
+    "tour": "WTA",
+    "original_name": "Barthel Mona"
+  },
+  "caterina grant tyra": {
+    "slug": "grant-e34f9",
+    "tour": "WTA",
+    "original_name": "Grant Tyra Caterina"
+  },
+  "destanee aiava": {
+    "slug": "aiava",
+    "tour": "WTA",
+    "original_name": "Aiava Destanee"
+  },
+  "marina bassols ribera": {
+    "slug": "bassols-ribera",
+    "tour": "WTA",
+    "original_name": "Bassols Ribera Marina"
+  },
+  "chloe paquet": {
+    "slug": "paquet",
+    "tour": "WTA",
+    "original_name": "Paquet Chloe"
+  },
+  "lisa pigato": {
+    "slug": "pigato-fbd6b",
+    "tour": "WTA",
+    "original_name": "Pigato Lisa"
+  },
+  "mingge xu": {
+    "slug": "xu-a0e12",
+    "tour": "WTA",
+    "original_name": "Xu Mingge"
+  },
+  "hina inoue": {
+    "slug": "inoue-6da8e",
+    "tour": "WTA",
+    "original_name": "Inoue Hina"
+  },
+  "rodrigues alves carolina meligeni": {
+    "slug": "alves-5a2e8",
+    "tour": "WTA",
+    "original_name": "Alves Carolina Meligeni Rodrigues"
+  },
+  "mai hontama": {
+    "slug": "hontama",
+    "tour": "WTA",
+    "original_name": "Hontama Mai"
+  },
+  "fiona crawley": {
+    "slug": "crawley-65dbb",
+    "tour": "WTA",
+    "original_name": "Crawley Fiona"
+  },
+  "yuriko miyazaki": {
+    "slug": "miyazaki-666f6",
+    "tour": "WTA",
+    "original_name": "Miyazaki Yuriko"
+  },
+  "katherine sebov": {
+    "slug": "sebov",
+    "tour": "WTA",
+    "original_name": "Sebov Katherine"
+  },
+  "caroline werner": {
+    "slug": "werner-0c6a8",
+    "tour": "WTA",
+    "original_name": "Werner Caroline"
+  },
+  "georgiana serban raluca": {
+    "slug": "serban-aab12",
+    "tour": "WTA",
+    "original_name": "Serban Raluca Georgiana"
+  },
+  "eva guerrero alvarez": {
+    "slug": "guerrero-alvarez",
+    "tour": "WTA",
+    "original_name": "Guerrero Alvarez Eva"
+  },
+  "susan bandecchi": {
+    "slug": "bandecchi",
+    "tour": "WTA",
+    "original_name": "Bandecchi Susan"
+  },
+  "jule niemeier": {
+    "slug": "niemeier",
+    "tour": "WTA",
+    "original_name": "Niemeier Jule"
+  }
+}

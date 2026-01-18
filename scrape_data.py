@@ -1,6 +1,10 @@
 """
 Tennis Data Scraper - Daily refresh script for GitHub Actions
 Scrapes Tennis Explorer for player match histories with priority scraping and caching
+
+Strategy:
+1. First fetch ranking pages to build player name -> slug lookup
+2. Then fetch match history for each player using direct URLs
 """
 
 import requests
@@ -39,11 +43,10 @@ class TennisDataScraper:
     def __init__(self, db_path="tennis_data.db"):
         self.db_path = db_path
         self.cache_path = Path(__file__).parent / "scrape_cache.json"
-        self.player_cache = {}  # In-memory slug cache
-        self.scrape_cache = self._load_scrape_cache()  # Persistent scrape timestamps
+        self.slug_cache_path = Path(__file__).parent / "player_slugs.json"
+        self.player_slugs = {}  # name -> {slug, tour}
+        self.scrape_cache = self._load_scrape_cache()
         self.db_lock = threading.Lock()
-        self.stats_lock = threading.Lock()
-        self.stats = {'found': 0, 'matches': 0, 'skipped': 0}
         self._init_database()
 
     def _create_session(self):
@@ -77,17 +80,35 @@ class TennisDataScraper:
         except Exception as e:
             log(f"Warning: Could not save scrape cache: {e}")
 
+    def _load_slug_cache(self) -> dict:
+        """Load the player slug cache from disk."""
+        if self.slug_cache_path.exists():
+            try:
+                with open(self.slug_cache_path, 'r') as f:
+                    return json.load(f)
+            except Exception:
+                return {}
+        return {}
+
+    def _save_slug_cache(self):
+        """Save the player slug cache to disk."""
+        try:
+            with open(self.slug_cache_path, 'w') as f:
+                json.dump(self.player_slugs, f, indent=2)
+        except Exception as e:
+            log(f"Warning: Could not save slug cache: {e}")
+
     def _should_scrape_player(self, player_name: str, is_priority: bool) -> bool:
         """Check if we should scrape this player based on cache."""
         if is_priority:
-            return True  # Always scrape priority players
+            return True
 
         cache_key = player_name.lower()
         if cache_key in self.scrape_cache:
             last_scraped = datetime.fromisoformat(self.scrape_cache[cache_key])
             age_days = (datetime.now() - last_scraped).days
             if age_days < self.CACHE_TTL_DAYS:
-                return False  # Skip - recently scraped
+                return False
         return True
 
     def _mark_player_scraped(self, player_name: str):
@@ -98,13 +119,11 @@ class TennisDataScraper:
         """Make a request with retries and exponential backoff."""
         for attempt in range(max_retries):
             try:
-                # Random delay between requests
                 time.sleep(random.uniform(2.0, 4.0))
-
                 response = session.get(url, timeout=30)
                 if response.status_code == 200:
                     return response
-                elif response.status_code == 429:  # Rate limited
+                elif response.status_code == 429:
                     wait_time = (attempt + 1) * 60
                     log(f"    Rate limited, waiting {wait_time}s...")
                     time.sleep(wait_time)
@@ -178,21 +197,39 @@ class TennisDataScraper:
         conn.commit()
         conn.close()
 
-    def search_player(self, session, player_name: str) -> dict:
-        """Search for a player on Tennis Explorer and return their info."""
-        cache_key = player_name.lower()
-        if cache_key in self.player_cache:
-            return self.player_cache[cache_key]
+    def _normalize_name(self, name: str) -> str:
+        """Normalize a name for matching."""
+        # Remove accents and special characters
+        replacements = {
+            'á': 'a', 'é': 'e', 'í': 'i', 'ó': 'o', 'ú': 'u',
+            'ä': 'a', 'ë': 'e', 'ï': 'i', 'ö': 'o', 'ü': 'u',
+            'ñ': 'n', 'ç': 'c', 'ş': 's', 'ğ': 'g',
+            'ą': 'a', 'ę': 'e', 'ł': 'l', 'ń': 'n', 'ś': 's', 'ź': 'z', 'ż': 'z',
+            'č': 'c', 'ř': 'r', 'š': 's', 'ž': 'z', 'ě': 'e', 'ů': 'u',
+            'ț': 't', 'ș': 's', 'ă': 'a', 'î': 'i', 'â': 'a',
+            'ø': 'o', 'å': 'a', 'æ': 'ae', 'ß': 'ss', 'ı': 'i',
+            'ć': 'c', 'đ': 'd', 'ő': 'o', 'ű': 'u', 'ý': 'y',
+        }
+        name = name.lower().strip()
+        for accented, plain in replacements.items():
+            name = name.replace(accented, plain)
+        return name
 
-        search_name = player_name.replace('-', ' ').replace("'", "")
-        name_variants = [
-            search_name,
-            ' '.join(search_name.split()[::-1]),
-        ]
+    def fetch_ranking_slugs(self, session, tour: str = 'ATP') -> dict:
+        """Fetch player slugs from ranking pages."""
+        slugs = {}
 
-        for name in name_variants:
-            search_query = name.replace(' ', '+')
-            url = f"{self.BASE_URL}/search/?search={search_query}"
+        if tour == 'ATP':
+            base_url = f"{self.BASE_URL}/ranking/atp-men/"
+        else:
+            base_url = f"{self.BASE_URL}/ranking/wta-women/"
+
+        # Fetch multiple pages to get more players
+        for page in range(1, 6):  # Pages 1-5 (top ~500 players)
+            if page == 1:
+                url = base_url
+            else:
+                url = f"{base_url}?page={page}"
 
             response = self._request(session, url)
             if not response:
@@ -203,46 +240,104 @@ class TennisDataScraper:
 
             for link in player_links:
                 href = link.get('href', '')
-                link_text = link.get_text(strip=True).lower()
+                name = link.get_text(strip=True)
 
-                search_parts = search_name.lower().split()
-                if all(part in link_text or part in href.lower() for part in search_parts[-1:]):
-                    match = re.search(r'/player/([^/]+)', href)
-                    if match:
-                        slug = match.group(1)
-                        tour = 'WTA' if any(x in href.lower() for x in ['wta', 'women']) else 'ATP'
-                        player_id = hash(slug) % (10**9)
-                        if tour == 'WTA':
-                            player_id = -abs(player_id)
+                if not name or not href:
+                    continue
 
-                        result = {
-                            'id': player_id,
-                            'name': player_name,
-                            'slug': slug,
-                            'tour': tour,
-                            'country': '',
-                            'ranking': None
-                        }
+                # Extract slug from href
+                match = re.search(r'/player/([^/]+)/?', href)
+                if match:
+                    slug = match.group(1)
 
-                        self.player_cache[cache_key] = result
-                        return result
+                    # Normalize the name (Tennis Explorer uses "Lastname Firstname")
+                    parts = name.split()
+                    if len(parts) >= 2:
+                        # Convert "Sinner Jannik" to "Jannik Sinner"
+                        normalized = f"{parts[-1]} {' '.join(parts[:-1])}"
+                    else:
+                        normalized = name
 
-        self.player_cache[cache_key] = None
+                    key = self._normalize_name(normalized)
+                    if key not in slugs:
+                        slugs[key] = {'slug': slug, 'tour': tour, 'original_name': name}
+
+            log(f"  {tour} page {page}: found {len(player_links)} player links, total unique: {len(slugs)}")
+
+        return slugs
+
+    def build_slug_lookup(self):
+        """Build player name -> slug lookup from ranking pages."""
+        log("Building player slug lookup from ranking pages...")
+
+        # Try to load existing cache first
+        self.player_slugs = self._load_slug_cache()
+        if self.player_slugs:
+            log(f"  Loaded {len(self.player_slugs)} slugs from cache")
+
+        session = self._create_session()
+
+        # Fetch ATP rankings
+        log("Fetching ATP rankings...")
+        atp_slugs = self.fetch_ranking_slugs(session, 'ATP')
+        self.player_slugs.update(atp_slugs)
+
+        time.sleep(5)  # Pause between tours
+
+        # Fetch WTA rankings
+        log("Fetching WTA rankings...")
+        wta_slugs = self.fetch_ranking_slugs(session, 'WTA')
+        self.player_slugs.update(wta_slugs)
+
+        log(f"Total players in slug lookup: {len(self.player_slugs)}")
+        self._save_slug_cache()
+
+    def find_player_slug(self, player_name: str) -> dict:
+        """Find the slug for a player name."""
+        key = self._normalize_name(player_name)
+
+        # Direct match
+        if key in self.player_slugs:
+            return self.player_slugs[key]
+
+        # Try reversed name (Firstname Lastname -> Lastname Firstname)
+        parts = player_name.split()
+        if len(parts) >= 2:
+            reversed_name = f"{parts[-1]} {' '.join(parts[:-1])}"
+            reversed_key = self._normalize_name(reversed_name)
+            if reversed_key in self.player_slugs:
+                return self.player_slugs[reversed_key]
+
+        # Try partial match on last name
+        last_name = self._normalize_name(parts[-1]) if parts else key
+        for cached_key, data in self.player_slugs.items():
+            if last_name in cached_key:
+                # Check if first name also matches
+                first_name = self._normalize_name(parts[0]) if parts else ""
+                if first_name and first_name in cached_key:
+                    return data
+
         return None
 
-    def fetch_player_matches(self, session, player_id: int, player_slug: str, player_name: str,
+    def fetch_player_matches(self, session, slug: str, player_name: str,
                             tour: str, max_matches: int = 30, cutoff_date: str = None) -> list:
         """Fetch match history for a specific player."""
         matches = []
-        url = f"{self.BASE_URL}/player/{player_slug}/?annual=all"
+        url = f"{self.BASE_URL}/player/{slug}/?annual=all"
 
         response = self._request(session, url)
         if not response:
             return matches
 
         soup = BeautifulSoup(response.text, 'html.parser')
-        name_elem = soup.select_one('h3.plDetail a, h1')
-        page_player_name = name_elem.get_text(strip=True) if name_elem else player_name
+
+        # Generate player ID from slug
+        player_id = hash(slug) % (10**9)
+        if tour == 'WTA':
+            player_id = -abs(player_id)
+
+        # Extract player's last name for matching (e.g., "Sinner" from "Jannik Sinner")
+        player_last_name = player_name.split()[-1].lower() if player_name else ""
 
         tables = soup.select('table.result')
         current_tournament = ""
@@ -254,22 +349,36 @@ class TennisDataScraper:
 
             for row in rows:
                 try:
-                    header = row.select_one('td.t-name a, th.t-name a')
-                    if header and not row.select('td.score, td.result'):
-                        tournament_text = header.get_text(strip=True)
-                        current_tournament = tournament_text
-                        current_surface = self._guess_surface(tournament_text)
-                        year_match = re.search(r'20\d{2}', tournament_text)
-                        if year_match:
-                            current_year = int(year_match.group())
-                        continue
-
                     cells = row.select('td')
-                    if len(cells) < 3:
+
+                    # Check for year/tournament header row (has 'year' class)
+                    year_cell = row.select_one('td.year')
+                    if year_cell:
+                        year_link = year_cell.select_one('a')
+                        if year_link:
+                            href = year_link.get('href', '')
+                            tournament_text = year_link.get_text(strip=True)
+
+                            # Extract year from href like /australian-open/2025/
+                            year_match = re.search(r'/(\d{4})/', href)
+                            if year_match:
+                                current_year = int(year_match.group(1))
+
+                            # Extract tournament name
+                            tournament_match = re.search(r'/([^/]+)/\d{4}/', href)
+                            if tournament_match:
+                                current_tournament = tournament_match.group(1).replace('-', ' ').title()
+
+                            current_surface = self._guess_surface(current_tournament)
                         continue
 
-                    first_cell = cells[0].get_text(strip=True)
-                    date_match = re.match(r'^(\d{1,2})\.(\d{1,2})\.$', first_cell)
+                    # Look for match rows with date cell (class 'first time')
+                    date_cell = row.select_one('td.first.time')
+                    if not date_cell:
+                        continue
+
+                    date_text = date_cell.get_text(strip=True)
+                    date_match = re.match(r'^(\d{1,2})\.(\d{1,2})\.$', date_text)
                     if not date_match:
                         continue
 
@@ -279,50 +388,60 @@ class TennisDataScraper:
                     if cutoff_date and match_date < cutoff_date:
                         continue
 
-                    opponent_link = row.select_one('td.t-name a[href*="/player/"]')
-                    if not opponent_link:
+                    # Get match name cell (class 't-name')
+                    name_cell = row.select_one('td.t-name')
+                    if not name_cell:
                         continue
 
-                    opponent_name = opponent_link.get_text(strip=True)
-                    opponent_href = opponent_link.get('href', '')
+                    match_text = name_cell.get_text(strip=True)
 
-                    if '/' in opponent_name:
+                    # Skip doubles matches
+                    if '/' in match_text:
                         continue
 
-                    opp_match = re.search(r'/player/([^/]+)', opponent_href)
-                    opponent_slug = opp_match.group(1) if opp_match else None
-                    opponent_id = hash(opponent_slug) % (10**9) if opponent_slug else hash(opponent_name) % (10**9)
+                    # Parse "Player1-Player2" format
+                    if '-' not in match_text:
+                        continue
+
+                    players = match_text.split('-')
+                    if len(players) != 2:
+                        continue
+
+                    player1_name = players[0].strip()
+                    player2_name = players[1].strip()
+
+                    # Determine if our player won (first position = winner)
+                    # Match names are in format "Winner-Loser"
+                    is_win = player_last_name in player1_name.lower()
+
+                    # Get opponent info
+                    opponent_name = player2_name if is_win else player1_name
+                    opponent_link = name_cell.select_one('a[href*="/player/"]')
+                    if opponent_link:
+                        opponent_href = opponent_link.get('href', '')
+                        opp_match = re.search(r'/player/([^/]+)', opponent_href)
+                        opponent_slug = opp_match.group(1) if opp_match else None
+                        opponent_id = hash(opponent_slug) % (10**9) if opponent_slug else hash(opponent_name) % (10**9)
+                    else:
+                        opponent_id = hash(opponent_name) % (10**9)
+
                     if tour == 'WTA':
                         opponent_id = -abs(opponent_id)
 
-                    score_text = ""
-                    for cell in cells:
-                        cell_text = cell.get_text(strip=True)
-                        if re.match(r'^\d{1,2}$', cell_text):
-                            score_text += cell_text + " "
+                    # Get score
+                    score_cell = row.select_one('td.tl')
+                    score_text = score_cell.get_text(strip=True) if score_cell else ""
 
-                    is_win = False
-                    sets = re.findall(r'(\d+)', score_text[:20])
-                    if len(sets) >= 2:
-                        is_win = int(sets[0]) > int(sets[1])
-
-                    row_classes = ' '.join(row.get('class', []))
-                    if 'win' in row_classes.lower():
-                        is_win = True
-                    elif 'lose' in row_classes.lower() or 'lost' in row_classes.lower():
-                        is_win = False
+                    # Get round
+                    round_cell = row.select_one('td.round')
+                    round_text = round_cell.get_text(strip=True) if round_cell else ""
 
                     if is_win:
-                        winner_id, winner_name = player_id, page_player_name
+                        winner_id, winner_name_out = player_id, player_name
                         loser_id, loser_name = opponent_id, opponent_name
                     else:
-                        winner_id, winner_name = opponent_id, opponent_name
-                        loser_id, loser_name = player_id, page_player_name
-
-                    round_text = ""
-                    round_cell = row.select_one('td.round')
-                    if round_cell:
-                        round_text = round_cell.get_text(strip=True)
+                        winner_id, winner_name_out = opponent_id, opponent_name
+                        loser_id, loser_name = player_id, player_name
 
                     match_id = f"TE_{match_date}_{abs(winner_id)}_{abs(loser_id)}"
 
@@ -333,10 +452,10 @@ class TennisDataScraper:
                         'surface': current_surface,
                         'round': round_text,
                         'winner_id': winner_id,
-                        'winner_name': winner_name,
+                        'winner_name': winner_name_out,
                         'loser_id': loser_id,
                         'loser_name': loser_name,
-                        'score': score_text.strip(),
+                        'score': score_text,
                         'tour': tour
                     })
 
@@ -440,7 +559,7 @@ class TennisDataScraper:
 
         cursor.execute("INSERT OR REPLACE INTO metadata (key, value) VALUES ('last_updated', ?)",
                       (datetime.now().isoformat(),))
-        cursor.execute("INSERT OR REPLACE INTO metadata (key, value) VALUES ('version', '4.0')")
+        cursor.execute("INSERT OR REPLACE INTO metadata (key, value) VALUES ('version', '4.1')")
 
         conn.commit()
         conn.close()
@@ -489,27 +608,37 @@ class TennisDataScraper:
             result['skipped'] = True
             return result
 
-        # Create session for this thread
-        session = self._create_session()
-
-        # Search for player
-        player_info = self.search_player(session, player_name)
-
-        if not player_info:
+        # Find player slug
+        player_data = self.find_player_slug(player_name)
+        if not player_data:
             return result
 
         result['found'] = True
+        slug = player_data['slug']
+        tour = player_data['tour']
+
+        # Generate player ID
+        player_id = hash(slug) % (10**9)
+        if tour == 'WTA':
+            player_id = -abs(player_id)
 
         # Save player info
-        self.save_player(player_info)
+        self.save_player({
+            'id': player_id,
+            'name': player_name,
+            'tour': tour,
+            'slug': slug,
+            'country': '',
+            'ranking': None
+        })
 
-        # Fetch matches
+        # Create session and fetch matches
+        session = self._create_session()
         matches = self.fetch_player_matches(
             session,
-            player_info['id'],
-            player_info['slug'],
-            player_info['name'],
-            player_info['tour'],
+            slug,
+            player_name,
+            tour,
             max_matches=30,
             cutoff_date=cutoff_date
         )
@@ -527,6 +656,9 @@ class TennisDataScraper:
         """Run a full data refresh with parallel scraping."""
         log(f"Starting full refresh at {datetime.now()}")
         log(f"Using {max_workers} parallel workers")
+
+        # Build slug lookup from ranking pages
+        self.build_slug_lookup()
 
         # Calculate cutoff date (12 months ago)
         cutoff_date = (datetime.now() - timedelta(days=365)).strftime('%Y-%m-%d')
@@ -547,13 +679,11 @@ class TennisDataScraper:
         player_queue = []
         seen = set()
 
-        # Add priority players first
         for p in priority_players:
             if p.lower() not in seen:
                 player_queue.append((p, True))
                 seen.add(p.lower())
 
-        # Add remaining players
         for p in all_players:
             if p.lower() not in seen:
                 player_queue.append((p, False))
@@ -568,13 +698,11 @@ class TennisDataScraper:
         players_not_found = []
 
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
-            # Submit all tasks
             futures = {
                 executor.submit(self._scrape_single_player, name, is_priority, cutoff_date): (name, is_priority)
                 for name, is_priority in player_queue
             }
 
-            # Process results as they complete
             completed = 0
             for future in as_completed(futures):
                 completed += 1
@@ -591,17 +719,15 @@ class TennisDataScraper:
                     else:
                         players_not_found.append(player_name)
 
-                    # Progress update every 25 players
                     if completed % 25 == 0 or completed == len(futures):
-                        priority_tag = " [P]" if is_priority else ""
                         log(f"  Progress: {completed}/{len(futures)} | Found: {players_found} | "
-                            f"Skipped: {players_skipped} | Matches: {total_matches}{priority_tag}")
+                            f"Skipped: {players_skipped} | Matches: {total_matches}")
 
                 except Exception as e:
                     log(f"    Error processing {player_name}: {e}")
                     players_not_found.append(player_name)
 
-        # Save scrape cache
+        # Save caches
         self._save_scrape_cache()
 
         log(f"\nScraping complete:")
@@ -610,8 +736,8 @@ class TennisDataScraper:
         log(f"  Players not found: {len(players_not_found)}")
         log(f"  Total matches collected: {total_matches}")
 
-        if players_not_found and len(players_not_found) <= 30:
-            log(f"\nPlayers not found:")
+        if players_not_found and len(players_not_found) <= 50:
+            log(f"\nPlayers not found ({len(players_not_found)}):")
             for p in players_not_found:
                 log(f"  - {p}")
 
@@ -639,6 +765,46 @@ class TennisDataScraper:
         log(f"Final stats: {player_count} players, {match_count} matches")
 
 
-if __name__ == "__main__":
+def test_search():
+    """Test the scraper functionality."""
+    log("Testing scraper...")
     scraper = TennisDataScraper()
-    scraper.run_full_refresh(max_workers=3)
+
+    # Build slug lookup
+    scraper.build_slug_lookup()
+
+    # Test finding some players
+    test_players = ["Jannik Sinner", "Carlos Alcaraz", "Novak Djokovic", "Iga Swiatek", "Aryna Sabalenka"]
+
+    for player in test_players:
+        data = scraper.find_player_slug(player)
+        if data:
+            log(f"  {player} -> {data['slug']} ({data['tour']})")
+        else:
+            log(f"  {player} -> NOT FOUND")
+
+    # Test fetching matches for one player
+    log("\nTesting match fetch for Sinner...")
+    session = scraper._create_session()
+    sinner_data = scraper.find_player_slug("Jannik Sinner")
+    if sinner_data:
+        matches = scraper.fetch_player_matches(
+            session,
+            sinner_data['slug'],
+            "Jannik Sinner",
+            sinner_data['tour'],
+            max_matches=10
+        )
+        log(f"  Found {len(matches)} matches")
+        for m in matches[:5]:
+            log(f"    {m['date']}: {m['winner_name']} d. {m['loser_name']} ({m['score']}) - {m['tournament']}")
+
+
+if __name__ == "__main__":
+    import sys
+
+    if len(sys.argv) > 1 and sys.argv[1] == "test":
+        test_search()
+    else:
+        scraper = TennisDataScraper()
+        scraper.run_full_refresh(max_workers=3)
