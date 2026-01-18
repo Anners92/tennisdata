@@ -793,7 +793,19 @@ class TennisDataScraper:
         log(f"  Players not found: {len(players_not_found)}")
         log(f"  Total matches collected: {total_matches}")
 
-        if players_not_found and len(players_not_found) <= 50:
+        # Always save missing players to file
+        if players_not_found:
+            missing_file = Path(__file__).parent / "missing_players.json"
+            missing_data = {
+                "last_updated": datetime.now().isoformat(),
+                "count": len(players_not_found),
+                "players": sorted(players_not_found)
+            }
+            with open(missing_file, 'w', encoding='utf-8') as f:
+                json.dump(missing_data, f, indent=2, ensure_ascii=False)
+            log(f"\nMissing players saved to: missing_players.json")
+
+            # Also log them
             log(f"\nPlayers not found ({len(players_not_found)}):")
             for p in players_not_found:
                 log(f"  - {p}")
