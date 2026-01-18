@@ -10,10 +10,15 @@ import re
 import time
 import gzip
 import shutil
+import sys
 from datetime import datetime, timedelta
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import json
+
+def log(message):
+    """Print with immediate flush for GitHub Actions visibility."""
+    print(message, flush=True)
 
 class TennisDataScraper:
     """Scraper for Tennis Explorer data."""
@@ -161,8 +166,12 @@ class TennisDataScraper:
                 time.sleep(0.5)  # Rate limiting
 
             except Exception as e:
-                print(f"Error fetching rankings page {page}: {e}")
+                log(f"Error fetching rankings page {page}: {e}")
                 break
+
+            # Progress update every 10 pages
+            if page % 10 == 0:
+                log(f"    ... fetched {len(players)} players so far (page {page})")
 
         return players
 
@@ -289,7 +298,7 @@ class TennisDataScraper:
                     i += 1
 
         except Exception as e:
-            print(f"Error fetching results: {e}")
+            log(f"Error fetching results: {e}")
 
         return matches
 
@@ -399,56 +408,56 @@ class TennisDataScraper:
             with gzip.open(f"{self.db_path}.gz", 'wb') as f_out:
                 shutil.copyfileobj(f_in, f_out)
 
-        print(f"Compressed database: {self.db_path}.gz")
+        log(f"Compressed database: {self.db_path}.gz")
 
     def run_full_refresh(self):
         """Run a full data refresh."""
-        print(f"Starting full refresh at {datetime.now()}")
+        log(f"Starting full refresh at {datetime.now()}")
 
-        # Fetch ALL ATP rankings (up to 3000 to get all ranked players)
-        print("Fetching ATP rankings (all ranked players)...")
-        atp_players = self.fetch_rankings('atp', max_players=3000)
-        print(f"  Found {len(atp_players)} ATP players")
+        # Fetch ALL ATP rankings (up to 2000 to get all ranked players)
+        log("Fetching ATP rankings (all ranked players)...")
+        atp_players = self.fetch_rankings('atp', max_players=2000)
+        log(f"  Found {len(atp_players)} ATP players")
         self.save_players(atp_players)
 
-        # Fetch ALL WTA rankings (up to 2000 to get all ranked players)
-        print("Fetching WTA rankings (all ranked players)...")
-        wta_players = self.fetch_rankings('wta', max_players=2000)
-        print(f"  Found {len(wta_players)} WTA players")
+        # Fetch ALL WTA rankings (up to 1500 to get all ranked players)
+        log("Fetching WTA rankings (all ranked players)...")
+        wta_players = self.fetch_rankings('wta', max_players=1500)
+        log(f"  Found {len(wta_players)} WTA players")
         self.save_players(wta_players)
 
         # Fetch recent match results (last 12 months from today's date)
         now = datetime.now()
-        print(f"Fetching last 12 months of matches (from {now.strftime('%Y-%m-%d')})...")
+        log(f"Fetching last 12 months of matches (from {now.strftime('%Y-%m-%d')})...")
 
         for months_back in range(12):
             target = now - timedelta(days=30 * months_back)
             year, month = target.year, target.month
 
-            print(f"Fetching ATP matches for {year}-{month:02d}...")
+            log(f"Fetching ATP matches for {year}-{month:02d}...")
             atp_matches = self.fetch_match_results(year, month, 'atp')
-            print(f"  Found {len(atp_matches)} ATP matches")
+            log(f"  Found {len(atp_matches)} ATP matches")
             self.save_matches(atp_matches)
             time.sleep(1)
 
-            print(f"Fetching WTA matches for {year}-{month:02d}...")
+            log(f"Fetching WTA matches for {year}-{month:02d}...")
             wta_matches = self.fetch_match_results(year, month, 'wta')
-            print(f"  Found {len(wta_matches)} WTA matches")
+            log(f"  Found {len(wta_matches)} WTA matches")
             self.save_matches(wta_matches)
             time.sleep(1)
 
         # Compute stats
-        print("Computing surface statistics...")
+        log("Computing surface statistics...")
         self.compute_surface_stats()
 
         # Update metadata
         self.update_metadata()
 
         # Compress
-        print("Compressing database...")
+        log("Compressing database...")
         self.compress_database()
 
-        print(f"Refresh complete at {datetime.now()}")
+        log(f"Refresh complete at {datetime.now()}")
 
 
 if __name__ == "__main__":
