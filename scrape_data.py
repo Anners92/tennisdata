@@ -292,8 +292,8 @@ class TennisDataScraper:
         log(f"Total players in slug lookup: {len(self.player_slugs)}")
         self._save_slug_cache()
 
-    def find_player_slug(self, player_name: str) -> dict:
-        """Find the slug for a player name."""
+    def find_player_slug(self, player_name: str, session=None) -> dict:
+        """Find the slug for a player name. Will try URL guessing if not in cache."""
         key = self._normalize_name(player_name)
 
         # Direct match
@@ -308,14 +308,68 @@ class TennisDataScraper:
             if reversed_key in self.player_slugs:
                 return self.player_slugs[reversed_key]
 
-        # Try partial match on last name
+        # Try partial match on last name + first name
         last_name = self._normalize_name(parts[-1]) if parts else key
+        first_name = self._normalize_name(parts[0]) if len(parts) > 1 else ""
         for cached_key, data in self.player_slugs.items():
-            if last_name in cached_key:
-                # Check if first name also matches
-                first_name = self._normalize_name(parts[0]) if parts else ""
-                if first_name and first_name in cached_key:
-                    return data
+            if last_name in cached_key and first_name and first_name in cached_key:
+                return data
+
+        # FALLBACK: Try to guess the slug and verify URL exists
+        if session:
+            guessed = self._guess_and_verify_slug(player_name, session)
+            if guessed:
+                # Cache it for future use
+                self.player_slugs[key] = guessed
+                return guessed
+
+        return None
+
+    def _guess_and_verify_slug(self, player_name: str, session) -> dict:
+        """Try to guess player slug from name and verify it exists."""
+        parts = player_name.split()
+        if not parts:
+            return None
+
+        # Normalize name parts for URL
+        def slugify(s):
+            s = self._normalize_name(s)
+            s = re.sub(r'[^a-z0-9]', '-', s)
+            s = re.sub(r'-+', '-', s).strip('-')
+            return s
+
+        first_name = slugify(parts[0]) if parts else ""
+        last_name = slugify(parts[-1]) if parts else ""
+
+        # Common Tennis Explorer slug patterns to try
+        slug_patterns = []
+        if len(parts) >= 2:
+            slug_patterns = [
+                f"{last_name}-{first_name}",      # sinner-jannik
+                f"{last_name}",                    # djokovic
+                f"{first_name}-{last_name}",      # jannik-sinner
+            ]
+            # For names with middle parts like "De Minaur"
+            if len(parts) > 2:
+                middle = slugify(' '.join(parts[1:-1]))
+                slug_patterns.insert(0, f"{middle}-{last_name}-{first_name}")
+                slug_patterns.insert(1, f"{last_name}-{middle}-{first_name}")
+        else:
+            slug_patterns = [last_name]
+
+        for slug in slug_patterns:
+            url = f"{self.BASE_URL}/player/{slug}/"
+            try:
+                time.sleep(random.uniform(1.0, 2.0))
+                response = session.get(url, timeout=15, allow_redirects=True)
+                if response.status_code == 200:
+                    # Verify it's a real player page by checking for player content
+                    if 'plDetail' in response.text or 'player' in response.url:
+                        # Determine tour from page content
+                        tour = 'WTA' if 'wta' in response.text.lower()[:5000] else 'ATP'
+                        return {'slug': slug, 'tour': tour, 'original_name': player_name}
+            except Exception:
+                continue
 
         return None
 
@@ -608,8 +662,11 @@ class TennisDataScraper:
             result['skipped'] = True
             return result
 
-        # Find player slug
-        player_data = self.find_player_slug(player_name)
+        # Create session for this thread
+        session = self._create_session()
+
+        # Find player slug (will try URL guessing if not in rankings)
+        player_data = self.find_player_slug(player_name, session=session)
         if not player_data:
             return result
 
@@ -632,8 +689,7 @@ class TennisDataScraper:
             'ranking': None
         })
 
-        # Create session and fetch matches
-        session = self._create_session()
+        # Fetch matches
         matches = self.fetch_player_matches(
             session,
             slug,
@@ -727,8 +783,9 @@ class TennisDataScraper:
                     log(f"    Error processing {player_name}: {e}")
                     players_not_found.append(player_name)
 
-        # Save caches
+        # Save caches (including any newly discovered slugs)
         self._save_scrape_cache()
+        self._save_slug_cache()
 
         log(f"\nScraping complete:")
         log(f"  Players found: {players_found}")
