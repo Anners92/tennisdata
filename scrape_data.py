@@ -1,6 +1,6 @@
 """
 Tennis Data Scraper - Daily refresh script for GitHub Actions
-Scrapes Tennis Explorer for player match histories based on a player list
+Scrapes Tennis Explorer for player match histories with priority scraping and caching
 """
 
 import requests
@@ -10,10 +10,11 @@ import re
 import time
 import gzip
 import shutil
-import sys
 import random
+import threading
 from datetime import datetime, timedelta
 from pathlib import Path
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import json
 
 def log(message):
@@ -22,7 +23,7 @@ def log(message):
 
 
 class TennisDataScraper:
-    """Scraper for Tennis Explorer data."""
+    """Scraper for Tennis Explorer data with parallel scraping and caching."""
 
     BASE_URL = "https://www.tennisexplorer.com"
 
@@ -33,41 +34,82 @@ class TennisDataScraper:
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0',
     ]
 
+    CACHE_TTL_DAYS = 7  # Skip non-priority players scraped within this many days
+
     def __init__(self, db_path="tennis_data.db"):
         self.db_path = db_path
-        self.session = requests.Session()
-        self._rotate_user_agent()
+        self.cache_path = Path(__file__).parent / "scrape_cache.json"
+        self.player_cache = {}  # In-memory slug cache
+        self.scrape_cache = self._load_scrape_cache()  # Persistent scrape timestamps
+        self.db_lock = threading.Lock()
+        self.stats_lock = threading.Lock()
+        self.stats = {'found': 0, 'matches': 0, 'skipped': 0}
         self._init_database()
-        self.player_cache = {}  # Cache player slug lookups
 
-    def _rotate_user_agent(self):
-        """Rotate user agent to avoid detection."""
+    def _create_session(self):
+        """Create a new session with random user agent."""
+        session = requests.Session()
         ua = random.choice(self.USER_AGENTS)
-        self.session.headers.update({
+        session.headers.update({
             'User-Agent': ua,
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
             'Accept-Language': 'en-US,en;q=0.5',
             'Connection': 'keep-alive',
             'Cache-Control': 'no-cache',
         })
+        return session
 
-    def _request(self, url, max_retries=3):
+    def _load_scrape_cache(self) -> dict:
+        """Load the scrape cache from disk."""
+        if self.cache_path.exists():
+            try:
+                with open(self.cache_path, 'r') as f:
+                    return json.load(f)
+            except Exception:
+                return {}
+        return {}
+
+    def _save_scrape_cache(self):
+        """Save the scrape cache to disk."""
+        try:
+            with open(self.cache_path, 'w') as f:
+                json.dump(self.scrape_cache, f)
+        except Exception as e:
+            log(f"Warning: Could not save scrape cache: {e}")
+
+    def _should_scrape_player(self, player_name: str, is_priority: bool) -> bool:
+        """Check if we should scrape this player based on cache."""
+        if is_priority:
+            return True  # Always scrape priority players
+
+        cache_key = player_name.lower()
+        if cache_key in self.scrape_cache:
+            last_scraped = datetime.fromisoformat(self.scrape_cache[cache_key])
+            age_days = (datetime.now() - last_scraped).days
+            if age_days < self.CACHE_TTL_DAYS:
+                return False  # Skip - recently scraped
+        return True
+
+    def _mark_player_scraped(self, player_name: str):
+        """Mark a player as scraped in the cache."""
+        self.scrape_cache[player_name.lower()] = datetime.now().isoformat()
+
+    def _request(self, session, url, max_retries=3):
         """Make a request with retries and exponential backoff."""
         for attempt in range(max_retries):
             try:
-                # Random delay to appear more human-like
-                time.sleep(random.uniform(1.5, 3.0))
+                # Random delay between requests
+                time.sleep(random.uniform(2.0, 4.0))
 
-                response = self.session.get(url, timeout=30)
+                response = session.get(url, timeout=30)
                 if response.status_code == 200:
                     return response
                 elif response.status_code == 429:  # Rate limited
                     wait_time = (attempt + 1) * 60
                     log(f"    Rate limited, waiting {wait_time}s...")
                     time.sleep(wait_time)
-                    self._rotate_user_agent()
                 elif response.status_code == 404:
-                    return None  # Player not found
+                    return None
                 else:
                     log(f"    HTTP {response.status_code}")
                     time.sleep(10)
@@ -76,7 +118,6 @@ class TennisDataScraper:
                     wait_time = (attempt + 1) * 15
                     log(f"    Connection error, retrying in {wait_time}s...")
                     time.sleep(wait_time)
-                    self._rotate_user_agent()
                 else:
                     log(f"    Failed after {max_retries} attempts: {e}")
                     return None
@@ -137,52 +178,39 @@ class TennisDataScraper:
         conn.commit()
         conn.close()
 
-    def search_player(self, player_name: str) -> dict:
+    def search_player(self, session, player_name: str) -> dict:
         """Search for a player on Tennis Explorer and return their info."""
-        # Check cache first
         cache_key = player_name.lower()
         if cache_key in self.player_cache:
             return self.player_cache[cache_key]
 
-        # Normalize name for search
         search_name = player_name.replace('-', ' ').replace("'", "")
-
-        # Try different name formats
         name_variants = [
             search_name,
-            ' '.join(search_name.split()[::-1]),  # Reverse first/last name
+            ' '.join(search_name.split()[::-1]),
         ]
 
         for name in name_variants:
-            # Search URL
             search_query = name.replace(' ', '+')
             url = f"{self.BASE_URL}/search/?search={search_query}"
 
-            response = self._request(url)
+            response = self._request(session, url)
             if not response:
                 continue
 
             soup = BeautifulSoup(response.text, 'html.parser')
-
-            # Look for player links in search results
             player_links = soup.select('a[href*="/player/"]')
 
             for link in player_links:
                 href = link.get('href', '')
                 link_text = link.get_text(strip=True).lower()
 
-                # Check if this looks like our player
                 search_parts = search_name.lower().split()
-                if all(part in link_text or part in href.lower() for part in search_parts[-1:]):  # Match last name at minimum
-                    # Extract slug
+                if all(part in link_text or part in href.lower() for part in search_parts[-1:]):
                     match = re.search(r'/player/([^/]+)', href)
                     if match:
                         slug = match.group(1)
-
-                        # Determine tour (WTA if contains female indicators or negative context)
                         tour = 'WTA' if any(x in href.lower() for x in ['wta', 'women']) else 'ATP'
-
-                        # Generate consistent ID
                         player_id = hash(slug) % (10**9)
                         if tour == 'WTA':
                             player_id = -abs(player_id)
@@ -199,30 +227,24 @@ class TennisDataScraper:
                         self.player_cache[cache_key] = result
                         return result
 
-        # Not found
         self.player_cache[cache_key] = None
         return None
 
-    def fetch_player_matches(self, player_id: int, player_slug: str, player_name: str,
+    def fetch_player_matches(self, session, player_id: int, player_slug: str, player_name: str,
                             tour: str, max_matches: int = 30, cutoff_date: str = None) -> list:
         """Fetch match history for a specific player."""
         matches = []
-
         url = f"{self.BASE_URL}/player/{player_slug}/?annual=all"
 
-        response = self._request(url)
+        response = self._request(session, url)
         if not response:
             return matches
 
         soup = BeautifulSoup(response.text, 'html.parser')
-
-        # Get player's full name from page
         name_elem = soup.select_one('h3.plDetail a, h1')
         page_player_name = name_elem.get_text(strip=True) if name_elem else player_name
 
-        # Find match tables
         tables = soup.select('table.result')
-
         current_tournament = ""
         current_surface = "Hard"
         current_year = datetime.now().year
@@ -232,20 +254,16 @@ class TennisDataScraper:
 
             for row in rows:
                 try:
-                    # Check for tournament header
                     header = row.select_one('td.t-name a, th.t-name a')
                     if header and not row.select('td.score, td.result'):
                         tournament_text = header.get_text(strip=True)
                         current_tournament = tournament_text
                         current_surface = self._guess_surface(tournament_text)
-
-                        # Extract year
                         year_match = re.search(r'20\d{2}', tournament_text)
                         if year_match:
                             current_year = int(year_match.group())
                         continue
 
-                    # Check for date
                     cells = row.select('td')
                     if len(cells) < 3:
                         continue
@@ -258,11 +276,9 @@ class TennisDataScraper:
                     day, month = date_match.groups()
                     match_date = f"{current_year}-{month.zfill(2)}-{day.zfill(2)}"
 
-                    # Skip if before cutoff
                     if cutoff_date and match_date < cutoff_date:
                         continue
 
-                    # Get opponent
                     opponent_link = row.select_one('td.t-name a[href*="/player/"]')
                     if not opponent_link:
                         continue
@@ -270,31 +286,26 @@ class TennisDataScraper:
                     opponent_name = opponent_link.get_text(strip=True)
                     opponent_href = opponent_link.get('href', '')
 
-                    # Skip doubles
                     if '/' in opponent_name:
                         continue
 
-                    # Get opponent ID
                     opp_match = re.search(r'/player/([^/]+)', opponent_href)
                     opponent_slug = opp_match.group(1) if opp_match else None
                     opponent_id = hash(opponent_slug) % (10**9) if opponent_slug else hash(opponent_name) % (10**9)
                     if tour == 'WTA':
                         opponent_id = -abs(opponent_id)
 
-                    # Determine win/loss from score
                     score_text = ""
                     for cell in cells:
                         cell_text = cell.get_text(strip=True)
                         if re.match(r'^\d{1,2}$', cell_text):
                             score_text += cell_text + " "
 
-                    # Check if player won (first set count > second set count typically)
                     is_win = False
                     sets = re.findall(r'(\d+)', score_text[:20])
                     if len(sets) >= 2:
                         is_win = int(sets[0]) > int(sets[1])
 
-                    # Also check for win/loss indicators in row class or cells
                     row_classes = ' '.join(row.get('class', []))
                     if 'win' in row_classes.lower():
                         is_win = True
@@ -308,7 +319,6 @@ class TennisDataScraper:
                         winner_id, winner_name = opponent_id, opponent_name
                         loser_id, loser_name = player_id, page_player_name
 
-                    # Get round
                     round_text = ""
                     round_cell = row.select_one('td.round')
                     if round_cell:
@@ -360,39 +370,41 @@ class TennisDataScraper:
         return 'Hard'
 
     def save_player(self, player: dict):
-        """Save a single player to database."""
-        conn = sqlite3.connect(self.db_path)
-        cursor = conn.cursor()
+        """Save a single player to database (thread-safe)."""
+        with self.db_lock:
+            conn = sqlite3.connect(self.db_path)
+            cursor = conn.cursor()
 
-        cursor.execute("""
-            INSERT OR REPLACE INTO players (id, name, country, ranking, tour, slug, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        """, (player['id'], player['name'], player.get('country', ''),
-              player.get('ranking'), player['tour'], player.get('slug', ''),
-              datetime.now().isoformat()))
+            cursor.execute("""
+                INSERT OR REPLACE INTO players (id, name, country, ranking, tour, slug, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            """, (player['id'], player['name'], player.get('country', ''),
+                  player.get('ranking'), player['tour'], player.get('slug', ''),
+                  datetime.now().isoformat()))
 
-        conn.commit()
-        conn.close()
+            conn.commit()
+            conn.close()
 
     def save_matches(self, matches: list):
-        """Save matches to database."""
+        """Save matches to database (thread-safe)."""
         if not matches:
             return
 
-        conn = sqlite3.connect(self.db_path)
-        cursor = conn.cursor()
+        with self.db_lock:
+            conn = sqlite3.connect(self.db_path)
+            cursor = conn.cursor()
 
-        for match in matches:
-            cursor.execute("""
-                INSERT OR IGNORE INTO matches
-                (id, date, tournament, surface, round, winner_id, winner_name, loser_id, loser_name, score, tour)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (match['id'], match['date'], match['tournament'], match['surface'],
-                  match.get('round', ''), match['winner_id'], match['winner_name'],
-                  match['loser_id'], match['loser_name'], match.get('score', ''), match['tour']))
+            for match in matches:
+                cursor.execute("""
+                    INSERT OR IGNORE INTO matches
+                    (id, date, tournament, surface, round, winner_id, winner_name, loser_id, loser_name, score, tour)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """, (match['id'], match['date'], match['tournament'], match['surface'],
+                      match.get('round', ''), match['winner_id'], match['winner_name'],
+                      match['loser_id'], match['loser_name'], match.get('score', ''), match['tour']))
 
-        conn.commit()
-        conn.close()
+            conn.commit()
+            conn.close()
 
     def compute_surface_stats(self):
         """Compute surface statistics for all players."""
@@ -428,7 +440,7 @@ class TennisDataScraper:
 
         cursor.execute("INSERT OR REPLACE INTO metadata (key, value) VALUES ('last_updated', ?)",
                       (datetime.now().isoformat(),))
-        cursor.execute("INSERT OR REPLACE INTO metadata (key, value) VALUES ('version', '3.0')")
+        cursor.execute("INSERT OR REPLACE INTO metadata (key, value) VALUES ('version', '4.0')")
 
         conn.commit()
         conn.close()
@@ -453,71 +465,155 @@ class TennisDataScraper:
             with open(player_file, 'r', encoding='utf-8') as f:
                 data = json.load(f)
                 return data.get('players', [])
-        else:
-            log("Warning: players_to_scrape.json not found, using default top players")
-            return []
+        return []
 
-    def run_full_refresh(self):
-        """Run a full data refresh."""
+    def load_priority_players(self) -> set:
+        """Load priority players (those with upcoming Betfair matches)."""
+        priority_file = Path(__file__).parent / "priority_players.json"
+
+        if priority_file.exists():
+            try:
+                with open(priority_file, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    return set(data.get('players', []))
+            except Exception:
+                return set()
+        return set()
+
+    def _scrape_single_player(self, player_name: str, is_priority: bool, cutoff_date: str) -> dict:
+        """Scrape a single player (runs in thread)."""
+        result = {'name': player_name, 'found': False, 'matches': 0, 'skipped': False}
+
+        # Check cache
+        if not self._should_scrape_player(player_name, is_priority):
+            result['skipped'] = True
+            return result
+
+        # Create session for this thread
+        session = self._create_session()
+
+        # Search for player
+        player_info = self.search_player(session, player_name)
+
+        if not player_info:
+            return result
+
+        result['found'] = True
+
+        # Save player info
+        self.save_player(player_info)
+
+        # Fetch matches
+        matches = self.fetch_player_matches(
+            session,
+            player_info['id'],
+            player_info['slug'],
+            player_info['name'],
+            player_info['tour'],
+            max_matches=30,
+            cutoff_date=cutoff_date
+        )
+
+        if matches:
+            self.save_matches(matches)
+            result['matches'] = len(matches)
+
+        # Mark as scraped
+        self._mark_player_scraped(player_name)
+
+        return result
+
+    def run_full_refresh(self, max_workers: int = 3):
+        """Run a full data refresh with parallel scraping."""
         log(f"Starting full refresh at {datetime.now()}")
+        log(f"Using {max_workers} parallel workers")
 
         # Calculate cutoff date (12 months ago)
         cutoff_date = (datetime.now() - timedelta(days=365)).strftime('%Y-%m-%d')
         log(f"Fetching matches since {cutoff_date}")
 
-        # Load player list
-        player_names = self.load_player_list()
-        log(f"Loaded {len(player_names)} players to scrape")
+        # Load player lists
+        all_players = self.load_player_list()
+        priority_players = self.load_priority_players()
 
-        if not player_names:
+        log(f"Loaded {len(all_players)} total players")
+        log(f"Loaded {len(priority_players)} priority players (Betfair upcoming)")
+
+        if not all_players and not priority_players:
             log("No players to scrape!")
             return
 
-        total_matches = 0
+        # Combine and deduplicate - priority first
+        player_queue = []
+        seen = set()
+
+        # Add priority players first
+        for p in priority_players:
+            if p.lower() not in seen:
+                player_queue.append((p, True))
+                seen.add(p.lower())
+
+        # Add remaining players
+        for p in all_players:
+            if p.lower() not in seen:
+                player_queue.append((p, False))
+                seen.add(p.lower())
+
+        log(f"Total unique players to process: {len(player_queue)}")
+
+        # Scrape with thread pool
         players_found = 0
+        players_skipped = 0
+        total_matches = 0
         players_not_found = []
 
-        for i, player_name in enumerate(player_names, 1):
-            # Progress update
-            if i % 25 == 0 or i == len(player_names):
-                log(f"  Processing {i}/{len(player_names)}: {player_name} | Found: {players_found} | Matches: {total_matches}")
-                self._rotate_user_agent()
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            # Submit all tasks
+            futures = {
+                executor.submit(self._scrape_single_player, name, is_priority, cutoff_date): (name, is_priority)
+                for name, is_priority in player_queue
+            }
 
-            # Search for player
-            player_info = self.search_player(player_name)
+            # Process results as they complete
+            completed = 0
+            for future in as_completed(futures):
+                completed += 1
+                player_name, is_priority = futures[future]
 
-            if not player_info:
-                players_not_found.append(player_name)
-                continue
+                try:
+                    result = future.result()
 
-            players_found += 1
+                    if result['skipped']:
+                        players_skipped += 1
+                    elif result['found']:
+                        players_found += 1
+                        total_matches += result['matches']
+                    else:
+                        players_not_found.append(player_name)
 
-            # Save player info
-            self.save_player(player_info)
+                    # Progress update every 25 players
+                    if completed % 25 == 0 or completed == len(futures):
+                        priority_tag = " [P]" if is_priority else ""
+                        log(f"  Progress: {completed}/{len(futures)} | Found: {players_found} | "
+                            f"Skipped: {players_skipped} | Matches: {total_matches}{priority_tag}")
 
-            # Fetch matches
-            matches = self.fetch_player_matches(
-                player_info['id'],
-                player_info['slug'],
-                player_info['name'],
-                player_info['tour'],
-                max_matches=30,
-                cutoff_date=cutoff_date
-            )
+                except Exception as e:
+                    log(f"    Error processing {player_name}: {e}")
+                    players_not_found.append(player_name)
 
-            if matches:
-                self.save_matches(matches)
-                total_matches += len(matches)
+        # Save scrape cache
+        self._save_scrape_cache()
 
-        log(f"\nTotal players found: {players_found}/{len(player_names)}")
-        log(f"Total matches collected: {total_matches}")
+        log(f"\nScraping complete:")
+        log(f"  Players found: {players_found}")
+        log(f"  Players skipped (cached): {players_skipped}")
+        log(f"  Players not found: {len(players_not_found)}")
+        log(f"  Total matches collected: {total_matches}")
 
-        if players_not_found:
-            log(f"\nPlayers not found ({len(players_not_found)}):")
-            for p in players_not_found[:20]:
+        if players_not_found and len(players_not_found) <= 30:
+            log(f"\nPlayers not found:")
+            for p in players_not_found:
                 log(f"  - {p}")
-            if len(players_not_found) > 20:
-                log(f"  ... and {len(players_not_found) - 20} more")
 
         # Compute stats
         log("\nComputing surface statistics...")
@@ -545,4 +641,4 @@ class TennisDataScraper:
 
 if __name__ == "__main__":
     scraper = TennisDataScraper()
-    scraper.run_full_refresh()
+    scraper.run_full_refresh(max_workers=3)
