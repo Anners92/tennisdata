@@ -405,21 +405,23 @@ class TennisDataScraper:
         """Run a full data refresh."""
         print(f"Starting full refresh at {datetime.now()}")
 
-        # Fetch ATP rankings (top 500)
-        print("Fetching ATP rankings...")
-        atp_players = self.fetch_rankings('atp', max_players=500)
+        # Fetch ALL ATP rankings (up to 3000 to get all ranked players)
+        print("Fetching ATP rankings (all ranked players)...")
+        atp_players = self.fetch_rankings('atp', max_players=3000)
         print(f"  Found {len(atp_players)} ATP players")
         self.save_players(atp_players)
 
-        # Fetch WTA rankings (top 500)
-        print("Fetching WTA rankings...")
-        wta_players = self.fetch_rankings('wta', max_players=500)
+        # Fetch ALL WTA rankings (up to 2000 to get all ranked players)
+        print("Fetching WTA rankings (all ranked players)...")
+        wta_players = self.fetch_rankings('wta', max_players=2000)
         print(f"  Found {len(wta_players)} WTA players")
         self.save_players(wta_players)
 
-        # Fetch recent match results (last 6 months)
+        # Fetch recent match results (last 12 months from today's date)
         now = datetime.now()
-        for months_back in range(6):
+        print(f"Fetching last 12 months of matches (from {now.strftime('%Y-%m-%d')})...")
+
+        for months_back in range(12):
             target = now - timedelta(days=30 * months_back)
             year, month = target.year, target.month
 
