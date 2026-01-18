@@ -225,7 +225,7 @@ class TennisDataScraper:
             base_url = f"{self.BASE_URL}/ranking/wta-women/"
 
         # Fetch multiple pages to get more players
-        for page in range(1, 6):  # Pages 1-5 (top ~500 players)
+        for page in range(1, 16):  # Pages 1-15 (top ~750 players per tour)
             if page == 1:
                 url = base_url
             else:
