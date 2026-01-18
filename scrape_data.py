@@ -11,6 +11,7 @@ import time
 import gzip
 import shutil
 import sys
+import random
 from datetime import datetime, timedelta
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -20,22 +21,62 @@ def log(message):
     """Print with immediate flush for GitHub Actions visibility."""
     print(message, flush=True)
 
+def retry_request(session, url, max_retries=3, timeout=30):
+    """Make a request with retries and exponential backoff."""
+    for attempt in range(max_retries):
+        try:
+            # Random delay to appear more human-like
+            time.sleep(random.uniform(1.0, 2.5))
+
+            response = session.get(url, timeout=timeout)
+            if response.status_code == 200:
+                return response
+            elif response.status_code == 429:  # Rate limited
+                wait_time = (attempt + 1) * 30
+                log(f"    Rate limited, waiting {wait_time}s...")
+                time.sleep(wait_time)
+            else:
+                log(f"    HTTP {response.status_code} for {url}")
+                time.sleep(5)
+        except Exception as e:
+            if attempt < max_retries - 1:
+                wait_time = (attempt + 1) * 10
+                log(f"    Request error, retrying in {wait_time}s...")
+                time.sleep(wait_time)
+            else:
+                raise
+    return None
+
 class TennisDataScraper:
     """Scraper for Tennis Explorer data."""
 
     BASE_URL = "https://www.tennisexplorer.com"
 
+    USER_AGENTS = [
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2 Safari/605.1.15',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0',
+    ]
+
     def __init__(self, db_path="tennis_data.db"):
         self.db_path = db_path
         self.session = requests.Session()
+        self._rotate_user_agent()
+        self._init_database()
+        self.player_slugs = {}  # Map player ID to slug for fetching matches
+        self.request_count = 0
+
+    def _rotate_user_agent(self):
+        """Rotate user agent to avoid detection."""
+        ua = random.choice(self.USER_AGENTS)
         self.session.headers.update({
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'User-Agent': ua,
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
             'Accept-Language': 'en-US,en;q=0.5',
             'Connection': 'keep-alive',
+            'Cache-Control': 'no-cache',
         })
-        self._init_database()
-        self.player_slugs = {}  # Map player ID to slug for fetching matches
 
     def _init_database(self):
         """Initialize the SQLite database."""
@@ -108,9 +149,9 @@ class TennisDataScraper:
                 url = f"{self.BASE_URL}/ranking/wta-women/?page={page}"
 
             try:
-                response = self.session.get(url, timeout=30)
-                if response.status_code != 200:
-                    log(f"    Failed to fetch page {page}: status {response.status_code}")
+                response = retry_request(self.session, url)
+                if not response:
+                    log(f"    Failed to fetch page {page}")
                     break
 
                 soup = BeautifulSoup(response.text, 'html.parser')
@@ -179,7 +220,7 @@ class TennisDataScraper:
                     break
 
                 page += 1
-                time.sleep(0.3)  # Rate limiting
+                # Rate limiting handled by retry_request
 
             except Exception as e:
                 log(f"Error fetching rankings page {page}: {e}")
@@ -200,8 +241,8 @@ class TennisDataScraper:
         url = f"{self.BASE_URL}/player/{player_slug}/?annual=all"
 
         try:
-            response = self.session.get(url, timeout=30)
-            if response.status_code != 200:
+            response = retry_request(self.session, url)
+            if not response:
                 return matches
 
             soup = BeautifulSoup(response.text, 'html.parser')
@@ -494,9 +535,10 @@ class TennisDataScraper:
             if not player_slug:
                 continue
 
-            # Progress update
+            # Progress update and rotate user agent periodically
             if i % 50 == 0 or i == len(all_players):
                 log(f"  Processing player {i}/{len(all_players)} ({player_name})... Total matches: {total_matches}")
+                self._rotate_user_agent()  # Rotate UA every 50 players
 
             # Fetch player's matches
             matches = self.fetch_player_matches(
@@ -509,8 +551,7 @@ class TennisDataScraper:
                 self.save_matches(matches)
                 total_matches += len(matches)
 
-            # Rate limiting - be respectful to the server
-            time.sleep(0.5)
+            # Rate limiting handled by retry_request
 
         log(f"\nTotal matches collected: {total_matches}")
 
