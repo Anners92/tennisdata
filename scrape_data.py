@@ -26,6 +26,240 @@ def log(message):
     print(message, flush=True)
 
 
+class PlayerNameMatcher:
+    """
+    Robust player name matching system that handles various name formats:
+    - "LastName F." (e.g., "Grubor A.")
+    - "F. LastName" (e.g., "A. Grubor")
+    - "FirstName LastName" (e.g., "Ana Grubor")
+    - "LastName FirstName" (e.g., "Grubor Ana")
+    - Compound names (e.g., "Del Potro J.", "Juan Martin Del Potro")
+    """
+
+    def __init__(self):
+        self.players = {}  # id -> canonical name
+        self.by_full_name = {}  # normalized full name -> id
+        self.by_last_name = {}  # last name -> [(id, full_name, first_initial)]
+        self.by_name_parts = {}  # each name part -> [(id, full_name)]
+        self.by_last_initial = {}  # "lastname_x" -> [(id, full_name)] where x is first initial
+
+    def _normalize(self, name: str) -> str:
+        """Normalize a name for comparison."""
+        if not name:
+            return ""
+        name = name.lower().strip()
+        name = name.replace('.', '')
+        name = ' '.join(name.split())
+        return name
+
+    def _extract_components(self, name: str) -> dict:
+        """Extract name components from various formats."""
+        result = {
+            'last_name': '',
+            'first_name': '',
+            'first_initial': '',
+            'all_parts': []
+        }
+
+        if not name:
+            return result
+
+        normalized = self._normalize(name)
+        parts = normalized.split()
+        result['all_parts'] = parts
+
+        if not parts:
+            return result
+
+        if len(parts) == 1:
+            result['last_name'] = parts[0]
+            return result
+
+        first_is_initial = len(parts[0]) == 1
+        last_is_initial = len(parts[-1]) == 1
+
+        if last_is_initial:
+            result['first_initial'] = parts[-1]
+            result['last_name'] = parts[0]
+            if len(parts) > 2:
+                result['first_name'] = ' '.join(parts[1:-1])
+        elif first_is_initial:
+            result['first_initial'] = parts[0]
+            result['last_name'] = parts[-1]
+            if len(parts) > 2:
+                result['first_name'] = ' '.join(parts[1:-1])
+        else:
+            result['first_name'] = parts[0]
+            result['last_name'] = parts[-1]
+            result['first_initial'] = parts[0][0] if parts[0] else ''
+
+        return result
+
+    def add_player(self, player_id: int, full_name: str):
+        """Add a player to all indexes."""
+        if not full_name:
+            return
+
+        self.players[player_id] = full_name
+        normalized = self._normalize(full_name)
+        components = self._extract_components(full_name)
+
+        # Index by full normalized name
+        self.by_full_name[normalized] = player_id
+        self.by_full_name[normalized.replace(' ', '')] = player_id
+
+        # Index by each name part (for compound name matching)
+        for part in components['all_parts']:
+            if len(part) > 1:
+                if part not in self.by_name_parts:
+                    self.by_name_parts[part] = []
+                self.by_name_parts[part].append((player_id, full_name))
+
+        # Index by last name
+        last_name = components['last_name']
+        if last_name and len(last_name) > 1:
+            if last_name not in self.by_last_name:
+                self.by_last_name[last_name] = []
+            first_initial = components['first_initial'] or (components['first_name'][0] if components['first_name'] else '')
+            self.by_last_name[last_name].append((player_id, full_name, first_initial))
+
+            if first_initial:
+                key = f"{last_name}_{first_initial}"
+                if key not in self.by_last_initial:
+                    self.by_last_initial[key] = []
+                self.by_last_initial[key].append((player_id, full_name))
+
+        # Index all parts as potential last names
+        for part in components['all_parts']:
+            if len(part) > 1:
+                if part not in self.by_last_name:
+                    self.by_last_name[part] = []
+                initial = ''
+                for p in components['all_parts']:
+                    if len(p) == 1:
+                        initial = p
+                        break
+                    elif p != part and len(p) > 1:
+                        initial = p[0]
+                        break
+                existing = [(pid, fn) for pid, fn, fi in self.by_last_name[part]]
+                if (player_id, full_name) not in existing:
+                    self.by_last_name[part].append((player_id, full_name, initial))
+
+    def find_player_id(self, name: str):
+        """Find a player ID for the given name using multiple matching strategies."""
+        if not name:
+            return None
+
+        normalized = self._normalize(name)
+        components = self._extract_components(name)
+
+        # Strategy 1: Exact match on normalized full name
+        if normalized in self.by_full_name:
+            return self.by_full_name[normalized]
+
+        no_spaces = normalized.replace(' ', '')
+        if no_spaces in self.by_full_name:
+            return self.by_full_name[no_spaces]
+
+        # Get significant parts sorted by length (longest first)
+        significant_parts = sorted(
+            [p for p in components['all_parts'] if len(p) > 1],
+            key=len, reverse=True
+        )
+
+        initial = None
+        for p in components['all_parts']:
+            if len(p) == 1:
+                initial = p
+                break
+        if not initial and len(significant_parts) >= 2:
+            initial = min(significant_parts, key=len)[0]
+
+        # Strategy 2: Match by longest name part + initial
+        for part in significant_parts:
+            if len(part) < 3:
+                continue
+
+            if part in self.by_last_name:
+                candidates = self.by_last_name[part]
+
+                if initial:
+                    matching = [(pid, fn) for pid, fn, fi in candidates
+                               if fi and fi[0] == initial]
+                    if len(matching) == 1:
+                        return matching[0][0]
+                    if matching:
+                        positive = [m for m in matching if m[0] > 0]
+                        if positive:
+                            return positive[0][0]
+                        return matching[0][0]
+
+                if len(candidates) == 1:
+                    return candidates[0][0]
+
+        # Strategy 3: last_name + initial combination
+        last_name = components['last_name']
+        first_initial = components['first_initial'] or initial
+
+        if last_name and len(last_name) >= 3 and first_initial:
+            key = f"{last_name}_{first_initial}"
+            if key in self.by_last_initial:
+                candidates = self.by_last_initial[key]
+                if len(candidates) == 1:
+                    return candidates[0][0]
+                positive = [c for c in candidates if c[0] > 0]
+                if len(positive) == 1:
+                    return positive[0][0]
+                if positive:
+                    return positive[0][0]
+                return candidates[0][0]
+
+        # Strategy 4: Fuzzy match with all significant parts
+        if len(significant_parts) >= 2:
+            long_parts = [p for p in significant_parts if len(p) >= 3]
+            if len(long_parts) >= 2:
+                best_match = None
+                best_score = 0
+
+                for pid, full_name in self.players.items():
+                    fn_normalized = self._normalize(full_name)
+                    fn_parts = fn_normalized.split()
+
+                    matches = sum(1 for sp in long_parts
+                                 if any(sp == fp or sp in fp or fp in sp for fp in fn_parts))
+
+                    if matches == len(long_parts):
+                        score = matches * 10 + (1 if pid > 0 else 0)
+                        if score > best_score:
+                            best_score = score
+                            best_match = pid
+
+                if best_match:
+                    return best_match
+
+        # Strategy 5: Single part with initial
+        if len(significant_parts) == 1 and initial:
+            part = significant_parts[0]
+            if len(part) >= 3 and part in self.by_last_name:
+                candidates = self.by_last_name[part]
+                matching = [(pid, fn) for pid, fn, fi in candidates
+                           if fi and fi[0] == initial]
+                if len(matching) == 1:
+                    return matching[0][0]
+                if matching:
+                    positive = [m for m in matching if m[0] > 0]
+                    if positive:
+                        return positive[0][0]
+                    return matching[0][0]
+
+        return None
+
+    def get_player_name(self, player_id: int):
+        """Get the canonical name for a player ID."""
+        return self.players.get(player_id)
+
+
 class TennisDataScraper:
     """Scraper for Tennis Explorer data with parallel scraping and caching."""
 
@@ -47,6 +281,7 @@ class TennisDataScraper:
         self.player_slugs = {}  # name -> {slug, tour}
         self.scrape_cache = self._load_scrape_cache()
         self.db_lock = threading.Lock()
+        self.name_matcher = PlayerNameMatcher()  # For robust name matching
         self._init_database()
 
     def _create_session(self):
@@ -141,6 +376,19 @@ class TennisDataScraper:
                     log(f"    Failed after {max_retries} attempts: {e}")
                     return None
         return None
+
+    def _load_players_into_matcher(self):
+        """Load existing players from database into the name matcher."""
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        cursor.execute("SELECT id, name FROM players")
+        count = 0
+        for row in cursor.fetchall():
+            self.name_matcher.add_player(row[0], row[1])
+            count += 1
+        conn.close()
+        if count > 0:
+            log(f"  Loaded {count} existing players into name matcher")
 
     def _init_database(self):
         """Initialize the SQLite database."""
@@ -514,16 +762,22 @@ class TennisDataScraper:
                     # Get opponent info
                     opponent_name = player2_name if is_win else player1_name
                     opponent_link = name_cell.select_one('a[href*="/player/"]')
-                    if opponent_link:
-                        opponent_href = opponent_link.get('href', '')
-                        opp_match = re.search(r'/player/([^/]+)', opponent_href)
-                        opponent_slug = opp_match.group(1) if opp_match else None
-                        opponent_id = hash(opponent_slug) % (10**9) if opponent_slug else hash(opponent_name) % (10**9)
-                    else:
-                        opponent_id = hash(opponent_name) % (10**9)
 
-                    if tour == 'WTA':
-                        opponent_id = -abs(opponent_id)
+                    # Try to find opponent in existing players using name matcher
+                    opponent_id = self.name_matcher.find_player_id(opponent_name)
+
+                    if opponent_id is None:
+                        # Fallback to hash-based ID
+                        if opponent_link:
+                            opponent_href = opponent_link.get('href', '')
+                            opp_match = re.search(r'/player/([^/]+)', opponent_href)
+                            opponent_slug = opp_match.group(1) if opp_match else None
+                            opponent_id = hash(opponent_slug) % (10**9) if opponent_slug else hash(opponent_name) % (10**9)
+                        else:
+                            opponent_id = hash(opponent_name) % (10**9)
+
+                        if tour == 'WTA':
+                            opponent_id = -abs(opponent_id)
 
                     # Get score
                     score_cell = row.select_one('td.tl')
@@ -600,6 +854,9 @@ class TennisDataScraper:
 
             conn.commit()
             conn.close()
+
+            # Also add to name matcher for lookups
+            self.name_matcher.add_player(player['id'], player['name'])
 
     def save_matches(self, matches: list):
         """Save matches to database (thread-safe)."""
@@ -862,6 +1119,10 @@ class TennisDataScraper:
         """Run a full data refresh with parallel scraping."""
         log(f"Starting full refresh at {datetime.now()}")
         log(f"Using {max_workers} parallel workers")
+
+        # Load existing players into name matcher for robust matching
+        log("\nLoading existing players into name matcher...")
+        self._load_players_into_matcher()
 
         # Build slug lookup from ranking pages
         self.build_slug_lookup()
