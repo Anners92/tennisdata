@@ -437,7 +437,50 @@ class TennisDataScraper:
                         continue
 
                     day, month = date_match.groups()
+                    month_int = int(month)
+                    day_int = int(day)
+
+                    # Smart year detection
+                    today = datetime.now()
+
+                    # Try tournament year first
                     match_date = f"{current_year}-{month.zfill(2)}-{day.zfill(2)}"
+
+                    try:
+                        match_dt = datetime.strptime(match_date, '%Y-%m-%d')
+                        days_ago = (today - match_dt).days
+
+                        # If the date is in the future, adjust year
+                        if match_dt > today:
+                            match_date = f"{today.year}-{month.zfill(2)}-{day.zfill(2)}"
+                            match_dt = datetime.strptime(match_date, '%Y-%m-%d')
+                            if match_dt > today:
+                                match_date = f"{today.year - 1}-{month.zfill(2)}-{day.zfill(2)}"
+
+                        # Key fix: If tournament year is last year but we're early in current year,
+                        # and the match month is the same as or earlier than current month,
+                        # the match might be from THIS year, not last year
+                        elif current_year == today.year - 1 and month_int <= today.month:
+                            # Check if using current year gives a recent date (within last 30 days)
+                            current_year_date = f"{today.year}-{month.zfill(2)}-{day.zfill(2)}"
+                            current_year_dt = datetime.strptime(current_year_date, '%Y-%m-%d')
+                            current_year_days_ago = (today - current_year_dt).days
+
+                            # If current year date is recent (within 30 days) and old year date is ~1 year ago
+                            # then use current year
+                            if 0 <= current_year_days_ago <= 30 and days_ago > 300:
+                                match_date = current_year_date
+
+                        # Also handle: tournament year is 2 years old but match should be recent
+                        elif days_ago > 350:
+                            # Try adding a year
+                            newer_date = f"{current_year + 1}-{month.zfill(2)}-{day.zfill(2)}"
+                            newer_dt = datetime.strptime(newer_date, '%Y-%m-%d')
+                            if newer_dt <= today:
+                                match_date = newer_date
+
+                    except ValueError:
+                        pass  # Invalid date, skip this match
 
                     if cutoff_date and match_date < cutoff_date:
                         continue
