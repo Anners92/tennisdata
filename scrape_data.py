@@ -630,6 +630,113 @@ class TennisDataScraper:
 
         log(f"Compressed database: {self.db_path}.gz")
 
+    def fetch_upcoming_matches(self, session) -> dict:
+        """Fetch upcoming matches from Tennis Explorer for today and tomorrow.
+
+        Returns dict with 'players' set and 'matches' list.
+        """
+        players = set()
+        matches = []
+
+        # Fetch today and tomorrow
+        today = datetime.now()
+        dates_to_fetch = [
+            today,
+            today + timedelta(days=1),
+        ]
+
+        for date in dates_to_fetch:
+            date_str = date.strftime('%Y-%m-%d')
+            url = f"{self.BASE_URL}/matches/?type=all&year={date.year}&month={date.month}&day={date.day}"
+
+            log(f"  Fetching matches for {date_str}...")
+            response = self._request(session, url)
+            if not response:
+                continue
+
+            soup = BeautifulSoup(response.text, 'html.parser')
+
+            # Find all match rows
+            match_rows = soup.select('tr.bott')
+
+            for row in match_rows:
+                try:
+                    # Get player links
+                    player_links = row.select('td.t-name a[href*="/player/"]')
+
+                    for link in player_links:
+                        name = link.get_text(strip=True)
+                        href = link.get('href', '')
+
+                        if not name or '/' in name:  # Skip doubles
+                            continue
+
+                        # Convert "Lastname F." or "Lastname Firstname" format
+                        # Tennis Explorer uses "Lastname Firstname" format
+                        parts = name.split()
+                        if len(parts) >= 2:
+                            # Convert "Sinner Jannik" to "Jannik Sinner"
+                            converted = f"{parts[-1]} {' '.join(parts[:-1])}"
+                            players.add(converted)
+                        else:
+                            players.add(name)
+
+                        # Extract slug if available
+                        slug_match = re.search(r'/player/([^/]+)', href)
+                        if slug_match:
+                            slug = slug_match.group(1)
+                            key = self._normalize_name(name)
+                            if key not in self.player_slugs:
+                                # Determine tour from context
+                                tour = 'WTA' if 'wta' in href.lower() else 'ATP'
+                                self.player_slugs[key] = {
+                                    'slug': slug,
+                                    'tour': tour,
+                                    'original_name': name
+                                }
+
+                    # Extract match info
+                    time_cell = row.select_one('td.first.time')
+                    tournament_row = row.find_previous('tr', class_='head')
+
+                    if player_links and len(player_links) >= 2:
+                        p1_name = player_links[0].get_text(strip=True)
+                        p2_name = player_links[1].get_text(strip=True)
+
+                        match_info = {
+                            'date': date_str,
+                            'time': time_cell.get_text(strip=True) if time_cell else '',
+                            'player1': p1_name,
+                            'player2': p2_name,
+                            'tournament': '',
+                        }
+
+                        if tournament_row:
+                            tourn_link = tournament_row.select_one('a')
+                            if tourn_link:
+                                match_info['tournament'] = tourn_link.get_text(strip=True)
+
+                        matches.append(match_info)
+
+                except Exception:
+                    continue
+
+            log(f"    Found {len(match_rows)} match rows, {len(players)} unique players so far")
+
+        # Save upcoming matches to file for reference
+        upcoming_file = Path(__file__).parent / "upcoming_matches.json"
+        upcoming_data = {
+            "last_updated": datetime.now().isoformat(),
+            "match_count": len(matches),
+            "player_count": len(players),
+            "matches": matches
+        }
+        with open(upcoming_file, 'w', encoding='utf-8') as f:
+            json.dump(upcoming_data, f, indent=2, ensure_ascii=False)
+        log(f"  Saved {len(matches)} upcoming matches to upcoming_matches.json")
+
+        return {'players': players, 'matches': matches}
+
     def load_player_list(self) -> list:
         """Load player list from JSON file."""
         player_file = Path(__file__).parent / "players_to_scrape.json"
@@ -716,6 +823,13 @@ class TennisDataScraper:
         # Build slug lookup from ranking pages
         self.build_slug_lookup()
 
+        # Fetch upcoming matches from Tennis Explorer (today + tomorrow)
+        log("\nFetching upcoming matches from Tennis Explorer...")
+        session = self._create_session()
+        upcoming = self.fetch_upcoming_matches(session)
+        upcoming_players = upcoming['players']
+        log(f"Found {len(upcoming_players)} players with upcoming matches")
+
         # Calculate cutoff date (12 months ago)
         cutoff_date = (datetime.now() - timedelta(days=365)).strftime('%Y-%m-%d')
         log(f"Fetching matches since {cutoff_date}")
@@ -724,22 +838,27 @@ class TennisDataScraper:
         all_players = self.load_player_list()
         priority_players = self.load_priority_players()
 
-        log(f"Loaded {len(all_players)} total players")
-        log(f"Loaded {len(priority_players)} priority players (Betfair upcoming)")
+        # Add upcoming match players to priority (they MUST be scraped)
+        priority_players = priority_players.union(upcoming_players)
+
+        log(f"Loaded {len(all_players)} players from file")
+        log(f"Total priority players (upcoming + Betfair): {len(priority_players)}")
 
         if not all_players and not priority_players:
             log("No players to scrape!")
             return
 
-        # Combine and deduplicate - priority first
+        # Combine and deduplicate - priority players first (upcoming matches)
         player_queue = []
         seen = set()
 
+        # Priority players (upcoming matches) go first and are always scraped
         for p in priority_players:
             if p.lower() not in seen:
                 player_queue.append((p, True))
                 seen.add(p.lower())
 
+        # Then add players from the static list
         for p in all_players:
             if p.lower() not in seen:
                 player_queue.append((p, False))
