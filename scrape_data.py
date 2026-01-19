@@ -470,6 +470,62 @@ class TennisDataScraper:
             name = name.replace(accented, plain)
         return name
 
+    def fetch_ranking_slugs_range(self, session, tour: str, start_page: int, end_page: int) -> dict:
+        """Fetch player slugs from a specific range of ranking pages.
+
+        Args:
+            session: requests session
+            tour: 'ATP' or 'WTA'
+            start_page: Starting page number (1-based)
+            end_page: Ending page number (inclusive)
+
+        Returns:
+            dict: name -> {slug, tour, original_name}
+        """
+        slugs = {}
+
+        if tour == 'ATP':
+            base_url = f"{self.BASE_URL}/ranking/atp-men/"
+        else:
+            base_url = f"{self.BASE_URL}/ranking/wta-women/"
+
+        for page in range(start_page, end_page + 1):
+            if page == 1:
+                url = base_url
+            else:
+                url = f"{base_url}?page={page}"
+
+            response = self._request(session, url)
+            if not response:
+                continue
+
+            soup = BeautifulSoup(response.text, 'html.parser')
+            player_links = soup.select('a[href*="/player/"]')
+
+            for link in player_links:
+                href = link.get('href', '')
+                name = link.get_text(strip=True)
+
+                if not name or not href:
+                    continue
+
+                match = re.search(r'/player/([^/]+)/?', href)
+                if match:
+                    slug = match.group(1)
+                    parts = name.split()
+                    if len(parts) >= 2:
+                        normalized = f"{parts[-1]} {' '.join(parts[:-1])}"
+                    else:
+                        normalized = name
+
+                    key = self._normalize_name(normalized)
+                    if key not in slugs:
+                        slugs[key] = {'slug': slug, 'tour': tour, 'original_name': name}
+
+            log(f"  {tour} page {page}: found {len(player_links)} player links, total: {len(slugs)}")
+
+        return slugs
+
     def fetch_ranking_slugs(self, session, tour: str = 'ATP') -> dict:
         """Fetch player slugs from ranking pages."""
         slugs = {}
@@ -1300,11 +1356,236 @@ def test_search():
             log(f"    {m['date']}: {m['winner_name']} d. {m['loser_name']} ({m['score']}) - {m['tournament']}")
 
 
+def run_parallel_shard(tour: str, start_page: int, end_page: int, shard_id: str):
+    """Run scraper for a specific tour and page range (for parallel execution).
+
+    Args:
+        tour: 'ATP' or 'WTA'
+        start_page: Starting ranking page (1-30)
+        end_page: Ending ranking page (1-30)
+        shard_id: Unique identifier for this shard (e.g., 'atp_1', 'wta_2')
+    """
+    log(f"\n{'='*60}")
+    log(f"PARALLEL SHARD: {shard_id}")
+    log(f"Tour: {tour}, Pages: {start_page}-{end_page}")
+    log(f"{'='*60}\n")
+
+    # Use a shard-specific database file
+    db_file = f"tennis_data_{shard_id}.db"
+    scraper = TennisDataScraper(db_path=db_file)
+
+    # Load existing players into name matcher
+    log("Loading existing players into name matcher...")
+    scraper._load_players_into_matcher()
+
+    session = scraper._create_session()
+
+    # Fetch slugs only for our tour and page range
+    log(f"Fetching {tour} rankings (pages {start_page}-{end_page})...")
+    slugs = scraper.fetch_ranking_slugs_range(session, tour, start_page, end_page)
+    scraper.player_slugs.update(slugs)
+    log(f"Found {len(slugs)} players in range")
+
+    # Calculate cutoff date (12 months ago)
+    cutoff_date = (datetime.now() - timedelta(days=365)).strftime('%Y-%m-%d')
+
+    # Build player queue from the slugs we fetched
+    player_queue = []
+    for key, data in slugs.items():
+        original_name = data.get('original_name', key)
+        # Convert "Lastname Firstname" to "Firstname Lastname"
+        parts = original_name.split()
+        if len(parts) >= 2:
+            converted = f"{parts[-1]} {' '.join(parts[:-1])}"
+        else:
+            converted = original_name
+        player_queue.append((converted, True))  # All priority for shard runs
+
+    log(f"Processing {len(player_queue)} players...")
+
+    # Scrape with thread pool
+    players_found = 0
+    total_matches = 0
+    players_not_found = []
+
+    with ThreadPoolExecutor(max_workers=4) as executor:
+        futures = {
+            executor.submit(scraper._scrape_single_player, name, True, cutoff_date): name
+            for name, _ in player_queue
+        }
+
+        completed = 0
+        for future in as_completed(futures):
+            completed += 1
+            player_name = futures[future]
+
+            try:
+                result = future.result()
+                if result['found']:
+                    players_found += 1
+                    total_matches += result['matches']
+                else:
+                    players_not_found.append(player_name)
+
+                if completed % 25 == 0 or completed == len(futures):
+                    log(f"  [{shard_id}] Progress: {completed}/{len(futures)} | "
+                        f"Found: {players_found} | Matches: {total_matches}")
+
+            except Exception as e:
+                log(f"    Error processing {player_name}: {e}")
+                players_not_found.append(player_name)
+
+    # Save cache
+    scraper._save_scrape_cache()
+    scraper._save_slug_cache()
+
+    # Compute stats and compress
+    log("Computing surface statistics...")
+    scraper.compute_surface_stats()
+    scraper.update_metadata()
+
+    log("Compressing database...")
+    scraper.compress_database()
+
+    # Final stats
+    conn = sqlite3.connect(db_file)
+    cursor = conn.cursor()
+    cursor.execute("SELECT COUNT(*) FROM players")
+    player_count = cursor.fetchone()[0]
+    cursor.execute("SELECT COUNT(*) FROM matches")
+    match_count = cursor.fetchone()[0]
+    conn.close()
+
+    log(f"\n[{shard_id}] COMPLETE: {player_count} players, {match_count} matches")
+
+    # Write stats file for merge job
+    stats_file = Path(__file__).parent / f"shard_stats_{shard_id}.json"
+    with open(stats_file, 'w') as f:
+        json.dump({
+            'shard_id': shard_id,
+            'tour': tour,
+            'pages': f"{start_page}-{end_page}",
+            'players': player_count,
+            'matches': match_count,
+            'not_found': len(players_not_found)
+        }, f, indent=2)
+
+
+def merge_shards():
+    """Merge all shard databases into the main database."""
+    log("Merging database shards...")
+
+    main_db = "tennis_data.db"
+    shard_files = list(Path(__file__).parent.glob("tennis_data_*.db"))
+
+    if not shard_files:
+        log("No shard files found!")
+        return
+
+    log(f"Found {len(shard_files)} shard files to merge")
+
+    # Create fresh main database
+    if Path(main_db).exists():
+        Path(main_db).unlink()
+
+    main_scraper = TennisDataScraper(db_path=main_db)
+
+    total_players = 0
+    total_matches = 0
+
+    for shard_file in shard_files:
+        log(f"  Merging {shard_file.name}...")
+
+        shard_conn = sqlite3.connect(shard_file)
+        shard_cursor = shard_conn.cursor()
+
+        # Copy players
+        shard_cursor.execute("SELECT * FROM players")
+        players = shard_cursor.fetchall()
+
+        with main_scraper.db_lock:
+            main_conn = sqlite3.connect(main_db)
+            main_cursor = main_conn.cursor()
+
+            for p in players:
+                main_cursor.execute("""
+                    INSERT OR REPLACE INTO players (id, name, country, ranking, tour, slug, updated_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                """, p)
+
+            total_players += len(players)
+
+            # Copy matches
+            shard_cursor.execute("SELECT * FROM matches")
+            matches = shard_cursor.fetchall()
+
+            for m in matches:
+                main_cursor.execute("""
+                    INSERT OR IGNORE INTO matches
+                    (id, date, tournament, surface, round, winner_id, winner_name, loser_id, loser_name, score, tour)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """, m)
+
+            total_matches += len(matches)
+            main_conn.commit()
+            main_conn.close()
+
+        shard_conn.close()
+
+        log(f"    Added {len(players)} players, {len(matches)} matches")
+
+    # Compute combined stats
+    log("Computing combined surface statistics...")
+    main_scraper.compute_surface_stats()
+    main_scraper.update_metadata()
+
+    log("Compressing final database...")
+    main_scraper.compress_database()
+
+    # Cleanup shard files
+    for shard_file in shard_files:
+        shard_file.unlink()
+        gz_file = Path(f"{shard_file}.gz")
+        if gz_file.exists():
+            gz_file.unlink()
+
+    # Cleanup stats files
+    for stats_file in Path(__file__).parent.glob("shard_stats_*.json"):
+        stats_file.unlink()
+
+    log(f"\nMerge complete! Total: {total_players} players, {total_matches} matches")
+
+
 if __name__ == "__main__":
     import sys
+    import argparse
 
-    if len(sys.argv) > 1 and sys.argv[1] == "test":
+    parser = argparse.ArgumentParser(description='Tennis Data Scraper')
+    parser.add_argument('command', nargs='?', default='full',
+                       choices=['full', 'test', 'shard', 'merge'],
+                       help='Command to run')
+    parser.add_argument('--tour', type=str, choices=['ATP', 'WTA'],
+                       help='Tour to scrape (for shard mode)')
+    parser.add_argument('--start-page', type=int, default=1,
+                       help='Starting ranking page (for shard mode)')
+    parser.add_argument('--end-page', type=int, default=30,
+                       help='Ending ranking page (for shard mode)')
+    parser.add_argument('--shard-id', type=str,
+                       help='Shard identifier (for shard mode)')
+    parser.add_argument('--workers', type=int, default=3,
+                       help='Number of worker threads')
+
+    args = parser.parse_args()
+
+    if args.command == 'test':
         test_search()
+    elif args.command == 'shard':
+        if not args.tour or not args.shard_id:
+            print("Error: --tour and --shard-id required for shard mode")
+            sys.exit(1)
+        run_parallel_shard(args.tour, args.start_page, args.end_page, args.shard_id)
+    elif args.command == 'merge':
+        merge_shards()
     else:
         scraper = TennisDataScraper()
-        scraper.run_full_refresh(max_workers=3)
+        scraper.run_full_refresh(max_workers=args.workers)

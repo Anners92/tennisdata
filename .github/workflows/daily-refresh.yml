@@ -1,4 +1,4 @@
-name: Daily Tennis Data Refresh
+name: Daily Tennis Data Refresh (Parallel)
 
 on:
   schedule:
@@ -10,7 +10,75 @@ permissions:
   contents: write
 
 jobs:
-  refresh-data:
+  # Run 6 parallel scrapers - ATP and WTA each split into 3 page ranges
+  # Each shard handles ~500 players (pages 1-10, 11-20, 21-30)
+  scrape:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false  # Continue other shards if one fails
+      max-parallel: 6   # Run all 6 in parallel
+      matrix:
+        include:
+          - tour: ATP
+            start_page: 1
+            end_page: 10
+            shard_id: atp_1
+          - tour: ATP
+            start_page: 11
+            end_page: 20
+            shard_id: atp_2
+          - tour: ATP
+            start_page: 21
+            end_page: 30
+            shard_id: atp_3
+          - tour: WTA
+            start_page: 1
+            end_page: 10
+            shard_id: wta_1
+          - tour: WTA
+            start_page: 11
+            end_page: 20
+            shard_id: wta_2
+          - tour: WTA
+            start_page: 21
+            end_page: 30
+            shard_id: wta_3
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run scraper shard ${{ matrix.shard_id }}
+        run: |
+          python scrape_data.py shard \
+            --tour ${{ matrix.tour }} \
+            --start-page ${{ matrix.start_page }} \
+            --end-page ${{ matrix.end_page }} \
+            --shard-id ${{ matrix.shard_id }} \
+            --workers 4
+
+      - name: Upload shard database
+        uses: actions/upload-artifact@v4
+        with:
+          name: shard-${{ matrix.shard_id }}
+          path: |
+            tennis_data_${{ matrix.shard_id }}.db.gz
+            shard_stats_${{ matrix.shard_id }}.json
+          retention-days: 1
+
+  # Merge all shards into final database
+  merge:
+    needs: scrape
     runs-on: ubuntu-latest
 
     steps:
@@ -29,13 +97,45 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run scraper
-        run: python scrape_data.py
+      - name: Download all shard databases
+        uses: actions/download-artifact@v4
+        with:
+          pattern: shard-*
+          merge-multiple: true
+
+      - name: List downloaded files
+        run: ls -la *.db.gz *.json 2>/dev/null || echo "No files found"
+
+      - name: Decompress shard databases
+        run: |
+          for f in tennis_data_*.db.gz; do
+            if [ -f "$f" ]; then
+              gunzip -f "$f"
+              echo "Decompressed $f"
+            fi
+          done
+
+      - name: Merge shards
+        run: python scrape_data.py merge
+
+      - name: Verify final database
+        run: |
+          python -c "
+          import sqlite3
+          conn = sqlite3.connect('tennis_data.db')
+          cursor = conn.cursor()
+          cursor.execute('SELECT COUNT(*) FROM players')
+          players = cursor.fetchone()[0]
+          cursor.execute('SELECT COUNT(*) FROM matches')
+          matches = cursor.fetchone()[0]
+          print(f'Final database: {players} players, {matches} matches')
+          conn.close()
+          "
 
       - name: Commit and push changes
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add tennis_data.db.gz
-          git diff --staged --quiet || git commit -m "Daily data refresh $(date +'%Y-%m-%d')"
+          git diff --staged --quiet || git commit -m "Daily data refresh $(date +'%Y-%m-%d') - Parallel scrape"
           git push
