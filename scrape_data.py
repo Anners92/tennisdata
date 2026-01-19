@@ -1,10 +1,17 @@
 """
-Tennis Data Scraper - Daily refresh script for GitHub Actions
-Scrapes Tennis Explorer for player match histories with priority scraping and caching
+Tennis Data Scraper - Primary Data Source for Tennis Betting System
+Scrapes Tennis Explorer for player match histories with priority scraping and caching.
+This is the SOLE data source - no longer using Jeff Sackmann's GitHub repos.
+
+Coverage:
+- Top 1500 ATP players (30 ranking pages)
+- Top 1500 WTA players (30 ranking pages)
+- 12 months of match history per player
 
 Strategy:
 1. First fetch ranking pages to build player name -> slug lookup
 2. Then fetch match history for each player using direct URLs
+3. Use PlayerNameMatcher for robust name matching across formats
 """
 
 import requests
@@ -472,8 +479,9 @@ class TennisDataScraper:
         else:
             base_url = f"{self.BASE_URL}/ranking/wta-women/"
 
-        # Fetch multiple pages to get more players
-        for page in range(1, 16):  # Pages 1-15 (top ~750 players per tour)
+        # Fetch multiple pages to get top 1500 players per tour
+        # Tennis Explorer shows ~50 players per page, so 30 pages = ~1500 players
+        for page in range(1, 31):  # Pages 1-30 (top ~1500 players per tour)
             if page == 1:
                 url = base_url
             else:
